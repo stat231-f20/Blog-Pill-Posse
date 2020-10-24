@@ -1,0 +1,91 @@
+---
+title: "Your Project Title Here"
+author: "Your Names Here"
+date: "Add a date"
+output:
+  rmdformats::readthedown:
+    thumbnails: false
+    highlight: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+library(tidyverse)
+```
+
+# Header 1
+
+## Header 2
+
+### Header 3
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For example, you can include **Bold** and _Italic_ and `Code` text.  For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+You should test out updating your GitHub Pages website:
+
+- clone your group's blog project repo in RStudio
+- update "Your Project Title Here" to a new title in the YAML header
+- knit `index.Rmd` 
+- commit and push BOTH the `index.Rmd` and the `index.html` files
+- go to https://stat231-f20.github.io/Blog-Pill-Posse/ to see the published test document (this is publicly available!)
+
+## Including code and plots
+
+You can embed code as normal, for example:
+
+```{r cars}
+summary(cars)
+```
+
+Let's clean up the format of that output:
+
+```{r pretty, echo=FALSE, warning=FALSE, message=FALSE}
+library(kableExtra)
+summary(cars) %>%
+  kable(col.names = c("Speed", "Distance")
+        , row.names = F) %>%
+  kable_styling(bootstrap_options = "striped"
+                , full_width = F) %>%
+  row_spec(0, bold = T, underline = T) %>%
+  column_spec(1:2, width = "1.5in") 
+```
+
+In a study from the 1920s, fifty cars were used to see how the speed of the car and the distance taken to stop were related.  Speeds ranged between `r min(cars$speed)` and `r max(cars$speed)` mph.  Distances taken to stop ranged between `r min(cars$dist)` and `r max(cars$dist)` feet, with the middle 50% falling between `r as.numeric(quantile(cars$dist)[2])` and `r as.numeric(quantile(cars$dist)[4])` feet.  
+
+You can also embed plots as normal, for example:
+
+```{r figure1, echo=FALSE}
+ggplot(data = cars, aes(x = speed, y = dist)) + 
+  geom_point() + 
+  labs(x = "Speed of car (mph)"
+       , y = "Distance taken to stop (ft)"
+       , title = "cars data (1920s)")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## Including links and images
+
+You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) and images ![team logo](https://raw.githubusercontent.com/stat231-f20/Blog-Pill-Posse/main/images/pill_posse.png)
+
+
+# You can even create tabs if you want! {.tabset .tabset-fade .tabset-pills}
+
+## Bulleted list
+
+You can make a bulleted list like this:
+
+- item 1
+- item 2
+- item 3
+
+
+## Numbered list
+
+You can make a numbered list like this
+
+1. First thing I want to say
+2. Second thing I want to say
+3. Third thing I want to say
+
