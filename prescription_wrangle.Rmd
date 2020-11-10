@@ -70,5 +70,64 @@ raw_data_2017 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 20
 raw_data_2018 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2018_CDC_state_prescription_data.csv") %>% 
   rename(`2018` = `2018 Prescribing Rate`)
 
+#PIVOT EACH TABLE TO GET YEAR AS VALUE
+
+prescription_2006 <- raw_data_2006 %>%
+  pivot_longer(`2006`, names_to = "year")
+
+prescription_2007 <- raw_data_2007 %>%
+  pivot_longer(`2007`, names_to = "year")
+
+prescription_2008 <- raw_data_2008 %>%
+  pivot_longer(`2008`, names_to = "year")
+
+prescription_2009 <- raw_data_2009 %>%
+  pivot_longer(`2009`, names_to = "year")
+
+prescription_2010 <- raw_data_2010 %>%
+  pivot_longer(`2010`, names_to = "year")
+
+prescription_2011 <- raw_data_2011 %>%
+  pivot_longer(`2011`, names_to = "year")
+
+prescription_2011 <- raw_data_2011 %>%
+  pivot_longer(`2011`, names_to = "year")
+
+prescription_2012 <- raw_data_2012 %>%
+  pivot_longer(`2012`, names_to = "year")
+
+prescription_2013 <- raw_data_2013 %>%
+  pivot_longer(`2013`, names_to = "year")
+
+prescription_2014 <- raw_data_2014 %>%
+  pivot_longer(`2014`, names_to = "year")
+
+prescription_2015 <- raw_data_2015 %>%
+  pivot_longer(`2015`, names_to = "year")
+
+prescription_2016 <- raw_data_2016 %>%
+  pivot_longer(`2016`, names_to = "year")
+
+prescription_2017 <- raw_data_2017 %>%
+  pivot_longer(`2017`, names_to = "year") %>%
+  rename("State ABBR" = Abbreviation)
+
+prescription_2018 <- raw_data_2018 %>%
+  pivot_longer(`2018`, names_to = "year") %>%
+  rename("State ABBR" = Abbreviation)
+
+
+#STACK TABLES ON TOP OF EACH OTHER
+
+all_prescription_data <- rbind(prescription_2006, prescription_2007, 
+                               prescription_2008, prescription_2009, 
+                               prescription_2010, prescription_2011, 
+                               prescription_2012, prescription_2013, 
+                               prescription_2014, prescription_2015, 
+                               prescription_2016, prescription_2017, 
+                               prescription_2018)
+
+saveRDS(all_prescription_data, file = "prescription_data.rds")
+
 
 ```
