@@ -133,7 +133,7 @@ all_prescription_data <- rbind(prescription_2006, prescription_2007,
   rename(prescription_rate = value) %>% 
   mutate(state = tolower(State))
 
-saveRDS(prescription_data, file = "prescription_data.rds")
+saveRDS(all_prescription_data, file = "prescription_data.rds")
 ```
 
 

@@ -8,8 +8,7 @@ library(maps)
 library(datasets)
 
 # Read in Data
-prescription_data <- readRDS(file = "prescription_data.rds") %>%
-  mutate(state = tolower(State))
+prescription_data <- readRDS(file = "prescription_data.rds")
   
 # Set up map data
 usa_states <- map_data(map = "state"                       
