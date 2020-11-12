@@ -129,7 +129,8 @@ all_prescription_data <- rbind(prescription_2006, prescription_2007,
   filter(year >= 2014) %>% 
   mutate(year = as.integer(year)) %>% 
   filter(`State ABBR` != "DC") %>% 
-  filter(`State ABBR` != "US")
+  filter(`State ABBR` != "US") %>% 
+  rename(prescription_rate = value)
 
 saveRDS(all_prescription_data, file = "prescription_data.rds")
 ```
