@@ -19,55 +19,55 @@ library(dplyr)
 #upload csv files
 
 #2006
-raw_data_2006 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2006_CDC_state_prescription_data.csv") %>% 
+raw_data_2006 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2006_CDC_state_prescription_data.csv") %>% 
   rename(`2006` = `2006 Prescribing Rate`)
 
 #2007
-raw_data_2007 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2007_CDC_state_prescription_data.csv") %>% 
+raw_data_2007 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2007_CDC_state_prescription_data.csv") %>% 
   rename(`2007` = `2007 Prescribing Rate`)
 
 #2008
-raw_data_2008 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2008_CDC_state_prescription_data.csv") %>% 
+raw_data_2008 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2008_CDC_state_prescription_data.csv") %>% 
   rename(`2008` = `2008 Prescribing Rate`)
 
 #2009
-raw_data_2009 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2009_CDC_state_prescription_data.csv") %>% 
+raw_data_2009 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2009_CDC_state_prescription_data.csv") %>% 
   rename(`2009` = `2009 Prescribing Rate`)
 
 #2010
-raw_data_2010 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2010_CDC_state_prescription_data.csv") %>% 
+raw_data_2010 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2010_CDC_state_prescription_data.csv") %>% 
   rename(`2010` = `2010 Prescribing Rate`)
 
 #2011
-raw_data_2011 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2011_CDC_state_prescription_data.csv") %>% 
+raw_data_2011 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2011_CDC_state_prescription_data.csv") %>% 
   rename(`2011` = `2011 Prescribing Rate`)
 
 #2012
-raw_data_2012 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2012_CDC_state_prescription_data.csv") %>% 
+raw_data_2012 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2012_CDC_state_prescription_data.csv") %>% 
   rename(`2012` = `2012 Prescribing Rate`)
 
 #2013
-raw_data_2013 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2013_CDC_state_prescription_data.csv") %>% 
+raw_data_2013 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2013_CDC_state_prescription_data.csv") %>% 
   rename(`2013` = `2013 Prescribing Rate`)
 
 #2014
-raw_data_2014 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2014_CDC_state_prescription_data.csv") %>% 
+raw_data_2014 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2014_CDC_state_prescription_data.csv") %>% 
   rename(`2014` = `2014 Prescribing Rate`)
 
 #2015
-raw_data_2015 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2015_CDC_state_prescription_data.csv") %>% 
+raw_data_2015 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2015_CDC_state_prescription_data.csv") %>% 
   rename(`2015` = `2015 Prescribing Rate`)
 
 #2016
-raw_data_2016 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2016_CDC_state_prescription_data.csv") %>% 
+raw_data_2016 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2016_CDC_state_prescription_data.csv") %>% 
   rename(`2016` = `2016 Prescribing Rate`)
 
 #2017
-raw_data_2017 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2017_CDC_state_prescription_data.csv") %>% 
+raw_data_2017 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2017_CDC_state_prescription_data.csv") %>% 
   rename(`2017` = `2017 Prescribing Rate`)
 
 #2018
-raw_data_2018 <- readr::read_csv("//Users/tamersullivan/Documents/School/Fall 2020 classes/Data Science/Blog-Pill-Posse/blog-data-raw/2018_CDC_state_prescription_data.csv") %>% 
+raw_data_2018 <- readr::read_csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/2018_CDC_state_prescription_data.csv") %>% 
   rename(`2018` = `2018 Prescribing Rate`)
 
 #PIVOT EACH TABLE TO GET YEAR AS VALUE
@@ -132,18 +132,16 @@ all_prescription_data <- rbind(prescription_2006, prescription_2007,
   filter(`State ABBR` != "US")
 
 saveRDS(all_prescription_data, file = "prescription_data.rds")
-
-
 ```
 
 
 ```{r}
 # Overdose Data
-overdose_2014 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2014 Overdose.csv")
-overdose_2015 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2015 Overdose.csv")
-overdose_2016 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2016 Overdose.csv")
-overdose_2017 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2017 Overdose.csv")
-overdose_2018 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2018 Overdose.csv")
+overdose_2014 <- read.csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2014 Overdose.csv")
+overdose_2015 <- read.csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2015 Overdose.csv")
+overdose_2016 <- read.csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2016 Overdose.csv")
+overdose_2017 <- read.csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2017 Overdose.csv")
+overdose_2018 <- read.csv("/Users/seanwei/Desktop/STAT231-swei1999/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2018 Overdose.csv")
 
 all_overdoses<- rbind(overdose_2014,overdose_2015,overdose_2016,overdose_2017,overdose_2018)
 
