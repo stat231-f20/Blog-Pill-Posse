@@ -125,7 +125,11 @@ all_prescription_data <- rbind(prescription_2006, prescription_2007,
                                prescription_2012, prescription_2013, 
                                prescription_2014, prescription_2015, 
                                prescription_2016, prescription_2017, 
-                               prescription_2018)
+                               prescription_2018) %>% 
+  filter(year >= 2014) %>% 
+  mutate(year = as.integer(year)) %>% 
+  filter(`State ABBR` != "DC") %>% 
+  filter(`State ABBR` != "US")
 
 saveRDS(all_prescription_data, file = "prescription_data.rds")
 
@@ -143,11 +147,9 @@ overdose_2018 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Ove
 
 all_overdoses<- rbind(overdose_2014,overdose_2015,overdose_2016,overdose_2017,overdose_2018)
 
-all_overdoses <- all_overdoses %>%
-  group_by(State) %>%
-  arrange(State)
-
-all_overdoses <- all_overdoses %>%
+all_overdoses <- all_overdoses %>% 
+  rename(year = Year) %>% 
+  arrange(year) %>%
   filter(State != "Washington D.C.")
 
 saveRDS(all_overdoses, file = "all_overdoses.rds")
