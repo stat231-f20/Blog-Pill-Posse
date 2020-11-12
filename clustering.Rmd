@@ -23,14 +23,9 @@ full_data <- left_join(prescriptions, overdoses, by = c("year", "State")) %>%
   group_by(state) %>% 
   summarise(avg_prescription_rate = mean(prescription_rate), avg_age_adjusted_rate = mean(age_adjusted_rate))
 
-# standardizing
-full_data_std <- full_data %>% 
-  select(avg_prescription_rate, avg_age_adjusted_rate) %>% 
-  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) 
-
 silhouette_score <- function(k){
-  km <- kmeans(full_data_std[,2:3], centers = k, nstart = 20)
-  score <- cluster::silhouette(km$cluster, dist(full_data_std[, 2:3]))
+  km <- kmeans(full_data[,2:3], centers = k, nstart = 20)
+  score <- cluster::silhouette(km$cluster, dist(full_data[, 2:3]))
   mean(score[, 3])
 }
 
@@ -49,6 +44,6 @@ ggplot(data = full_data, aes(x = avg_prescription_rate, y = avg_age_adjusted_rat
              , aes(x = avg_prescription_rate, y = avg_age_adjusted_rate)
              , pch = "X"
              , size = 3) +
-  labs(x = "Average Prescription Rate", y = "Average Age Adjusted Rate", color = "Cluster Assignment")
+  labs(x = "Average Prescription Rate", y = "Average Age Adjusted Overdose Rate", color = "Cluster Assignment")
 ```
 

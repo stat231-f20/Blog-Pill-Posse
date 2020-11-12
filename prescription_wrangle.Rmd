@@ -130,9 +130,10 @@ all_prescription_data <- rbind(prescription_2006, prescription_2007,
   mutate(year = as.integer(year)) %>% 
   filter(`State ABBR` != "DC") %>% 
   filter(`State ABBR` != "US") %>% 
-  rename(prescription_rate = value)
+  rename(prescription_rate = value) %>% 
+  mutate(state = tolower(State))
 
-saveRDS(all_prescription_data, file = "prescription_data.rds")
+saveRDS(prescription_data, file = "prescription_data.rds")
 ```
 
 
@@ -151,5 +152,5 @@ all_overdoses <- all_overdoses %>%
   arrange(year) %>%
   filter(State != "Washington D.C.")
 
-saveRDS(all_overdoses, file = "all_overdoses.rds")
+saveRDS(overdoses, file = "all_overdoses.rds")
 ```
