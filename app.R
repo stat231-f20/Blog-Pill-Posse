@@ -104,7 +104,7 @@ server <- function(input, output){
   output$prescriptions <- renderPlot({
     
     ggplot(prescription_graph(), aes(x = long, y = lat, group = group
-                              , fill = value)) +
+                              , fill = prescription_rate)) +
       geom_polygon(color = "white") +
       theme_void() +
       coord_fixed(ratio = 1.3) +
