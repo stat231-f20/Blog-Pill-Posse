@@ -12,7 +12,7 @@ library(ggrepel)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 prescriptions <- readRDS("prescription_data.rds")
 overdoses <- readRDS("all_overdoses.rds")
 
@@ -29,7 +29,7 @@ full_data_std <- full_data %>%
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) 
 
 silhouette_score <- function(k){
-  km <- kmeans(full_data_std[,2:3], centers = 10, nstart = 20)
+  km <- kmeans(full_data_std[,2:3], centers = k, nstart = 20)
   score <- cluster::silhouette(km$cluster, dist(full_data_std[, 2:3]))
   mean(score[, 3])
 }
@@ -39,7 +39,6 @@ avg_sil <- sapply(k, silhouette_score)
 optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
 
 km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
-km$cluster
 
 full_data <- mutate(full_data, cluster = as.character(km$cluster))
 
@@ -51,6 +50,5 @@ ggplot(data = full_data, aes(x = avg_prescription_rate, y = avg_age_adjusted_rat
              , pch = "X"
              , size = 3) +
   labs(x = "Average Prescription Rate", y = "Average Age Adjusted Rate", color = "Cluster Assignment")
-
 ```
 
