@@ -13,15 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message = FALSE, warning = FALSE}
-prescriptions <- readRDS("prescription_data.rds")
-overdoses <- readRDS("all_overdoses.rds")
+prescription_data <- readRDS("prescription_data.rds")
+overdose_data <- readRDS("all_overdoses.rds")
 
 # all years
-full_data <- left_join(prescriptions, overdoses, by = c("year", "State")) %>% 
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
-  group_by(state) %>% 
-  summarise(avg_prescription_rate = mean(prescription_rate), avg_age_adjusted_rate = mean(age_adjusted_rate))
+  filter(year == 2018) %>% 
+  select(-c(year))
 
 silhouette_score <- function(k){
   km <- kmeans(full_data[,2:3], centers = k, nstart = 20)
@@ -37,11 +37,11 @@ km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
 
 full_data <- mutate(full_data, cluster = as.character(km$cluster))
 
-ggplot(data = full_data, aes(x = avg_prescription_rate, y = avg_age_adjusted_rate)) + 
+ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) + 
   geom_point(aes(color = cluster)) +
   geom_text_repel(aes(label = state, color = cluster), size = 3) +
   geom_point(data = as.data.frame(km$centers)
-             , aes(x = avg_prescription_rate, y = avg_age_adjusted_rate)
+             , aes(x = prescription_rate, y = age_adjusted_rate)
              , pch = "X"
              , size = 3) +
   labs(x = "Average Prescription Rate", y = "Average Age Adjusted Overdose Rate", color = "Cluster Assignment")

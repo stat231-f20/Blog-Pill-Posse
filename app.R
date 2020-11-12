@@ -6,9 +6,14 @@ library(shinyWidgets)
 library(plotly)
 library(maps)
 library(datasets)
+library(ggrepel)
 
 # Read in Data
 prescription_data <- readRDS(file = "prescription_data.rds")
+overdose_data <- readRDS(file = "all_overdoses.rds")
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
+  janitor::clean_names() 
   
 # Set up map data
 usa_states <- map_data(map = "state"                       
@@ -76,6 +81,10 @@ ui <- fluidPage(
                   tabPanel("Prescription Rate vs. Overdose Rate",
                            HTML("<p>Is there a correlation between opioid prescription rate and overdose death rate?</p>"),
                            plotOutput("prescriptions")
+                  ),
+                  tabPanel("Clustering",
+                           HTML("<p>Something about clustering"),
+                                plotOutput("clusters")
                   )
       )
     )
@@ -91,9 +100,7 @@ server <- function(input, output){
       req(input$year) 
     if (input$year != "ALL") {
       prescription_map <- prescription_map %>% 
-        filter(
-          year == input$year
-        ) 
+        filter(year == input$year) 
     }
     else {
       prescription_map <- prescription_map
@@ -113,6 +120,48 @@ server <- function(input, output){
       theme(legend.position="bottom") +
       scale_fill_distiller(palette = 1, direction = 2)
     
+  })
+  
+  clustering_data <- reactive({
+    clustering_data <- full_data %>% 
+      req(input$year)
+    if (input$year != "ALL") {
+      clustering_data <- full_data %>% 
+        filter(year == input$year) %>% 
+        select(-c(year))
+    }
+    else {
+      clustering_data <- clustering_data %>% 
+        group_by(state) %>% 
+        summarise(prescription_rate = mean(prescription_rate), age_adjusted_rate = mean(age_adjusted_rate))
+    }
+  }) 
+  
+  output$clusters <- renderPlot({
+    
+    data <- clustering_data()
+    silhouette_score <- function(k){
+      km <- kmeans(data[,2:3], centers = k, nstart = 20)
+      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
+      mean(score[, 3])
+    }
+    
+    k <- 2:10
+    avg_sil <- sapply(k, silhouette_score)
+    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+    
+    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
+    
+    data <- mutate(data, cluster = as.character(km$cluster))
+    
+    ggplot(data = data, aes(x = prescription_rate, y = age_adjusted_rate)) + 
+      geom_point(aes(color = cluster)) +
+      geom_text_repel(aes(label = state, color = cluster), size = 3) +
+      geom_point(data = as.data.frame(km$centers)
+                 , aes(x = prescription_rate, y = age_adjusted_rate)
+                 , pch = "X"
+                 , size = 3) +
+      labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment")
   })
 
 }
