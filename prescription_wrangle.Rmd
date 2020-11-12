@@ -134,7 +134,7 @@ saveRDS(all_prescription_data, file = "prescription_data.rds")
 
 
 ```{r}
-# Chris Data Wrangling
+# Overdose Data
 overdose_2014 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2014 Overdose.csv")
 overdose_2014
 
@@ -148,13 +148,6 @@ overdose_2017
 
 overdose_2018 <- read.csv("//Users/cmurphy/git/Blog-Pill-Posse/blog-data-raw/Overdose Deaths - 2018 Overdose.csv")
 overdose_2018
-
-
-
-
-
-
-
 
 
 
