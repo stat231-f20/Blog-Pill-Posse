@@ -147,7 +147,5 @@ all_overdoses <- all_overdoses %>%
   group_by(State) %>%
   arrange(State)
 
-
-
-
+saveRDS(all_overdoses, file = "all_overdoses.rds")
 ```
