@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 prescription_data <- readRDS("prescription_data.rds")
 overdose_data <- readRDS("all_overdoses.rds")
 
-# all years
+# for example filter by 2018
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 

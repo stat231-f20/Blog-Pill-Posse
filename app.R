@@ -138,7 +138,7 @@ server <- function(input, output){
   }) 
   
   output$clusters <- renderPlot({
-    
+    set.seed(1106)
     data <- clustering_data()
     silhouette_score <- function(k){
       km <- kmeans(data[,2:3], centers = k, nstart = 20)
