@@ -84,7 +84,8 @@ ui <- fluidPage(
                   ),
                   tabPanel("Clustering",
                            HTML("<p>Something about clustering"),
-                                plotOutput("clusters")
+                           plotOutput("clusters"),
+                           plotOutput("clustermap")     
                   )
       )
     )
@@ -162,6 +163,39 @@ server <- function(input, output){
                  , pch = "X"
                  , size = 3) +
       labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment")
+  })
+  
+  output$clustermap <- renderPlot({
+    set.seed(1106)
+    data <- clustering_data()
+    silhouette_score <- function(k){
+      km <- kmeans(data[,2:3], centers = k, nstart = 20)
+      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
+      mean(score[, 3])
+    }
+    
+    k <- 2:10
+    avg_sil <- sapply(k, silhouette_score)
+    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+    
+    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
+    
+    data <- mutate(data, cluster = as.character(km$cluster))
+    
+    usa_states <- map_data(map = "state", region = ".") %>% 
+      mutate(state = stringr::str_to_title(region))
+    
+    cluster_map <- data %>%
+      inner_join(usa_states, by = "state")
+    
+    ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Opioid Prescription Rate by State",
+           subtitle = "MME Prescribed per 100 People",
+           fill = "") +
+      theme(legend.position="right")
   })
 
 }

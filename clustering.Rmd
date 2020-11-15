@@ -20,7 +20,7 @@ overdose_data <- readRDS("all_overdoses.rds")
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
-  filter(year == 2018) %>% 
+  filter(year == 2014) %>% 
   select(-c(year))
 
 silhouette_score <- function(k){
@@ -46,4 +46,26 @@ ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
              , size = 3) +
   labs(x = "Average Prescription Rate", y = "Average Age Adjusted Overdose Rate", color = "Cluster Assignment")
 ```
+
+```{r}
+library(maps)
+
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Opioid Prescription Rate by State",
+           subtitle = "MME Prescribed per 100 People",
+           fill = "") +
+      theme(legend.position="right")
+```
+
+
+
 
