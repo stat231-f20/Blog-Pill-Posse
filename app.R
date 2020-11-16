@@ -7,6 +7,7 @@ library(plotly)
 library(maps)
 library(datasets)
 library(ggrepel) 
+library(viridis)
 
 # Read in Data
 prescription_data <- readRDS(file = "prescription_data.rds")
@@ -27,6 +28,11 @@ usa_states <- map_data(map = "state"
 prescription_map <- prescription_data %>%
   inner_join(usa_states, by = c("state" = "region")) %>%
   rename(`Prescription Rate` = prescription_rate)
+
+# Join map data to Overdose data
+colnames(overdose_data)[1] <- "region"
+overdose_data[[1]] <- tolower(overdose_data[[1]])
+overdose_map<- inner_join(usa_states, overdose_data)
 
 # ui 
 ui <- fluidPage( 
@@ -91,7 +97,11 @@ ui <- fluidPage(
                            HTML("<p>Something about clustering"),
                            plotOutput("clusters"),
                            plotOutput("clustermap")     
+                  ),
+                  tabPanel("Opioid Deaths rate by State",
+                                plotlyOutput("overdoses")
                   )
+              
       )
     )
   )
@@ -201,8 +211,34 @@ server <- function(input, output){
            subtitle = "MME Prescribed per 100 People",
            fill = "") +
       theme(legend.position="right")
+    
   })
-
+    
+    # Chris' Tab
+    overdose_graph <- reactive({
+      data <-overdose_map %>% 
+        req(input$year) 
+      if (input$year != "ALL") {
+        data <- overdose_map %>% 
+          filter(year == input$year) 
+      }
+      else {
+        data <- overdose_map
+      }
+    })
+    output$overdoses <- renderPlotly({
+      ggplotly(
+        ggplot(overdose_graph(), aes(x = long, y = lat, group = group,
+                               fill = Age.Adjusted.Rate)) +
+          geom_polygon(color = "white") +
+          theme_void() +
+          coord_fixed(ratio = 1.3) +
+          labs(fill = "Age Adjusted DR") +
+          scale_fill_viridis(option = "magma", direction = -1)+
+          theme(legend.position="right")+
+          ggtitle(label = "Overdose Rates in the United States")
+      )
+    })
 }
 
 # call to shinyApp
