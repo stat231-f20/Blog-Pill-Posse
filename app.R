@@ -15,7 +15,9 @@ full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(-c(year_std, prescription_rate, age_adjusted_rate))
+  select(-c(year_std, prescription_rate, age_adjusted_rate)) %>%
+  rename(`Prescription Rate` = prescription_rate,
+         `Overdose Rate` = age_adjusted_rate)
   
 # Set up map data
 usa_states <- map_data(map = "state"                       
@@ -23,7 +25,8 @@ usa_states <- map_data(map = "state"
 
 # Join map data to prescription data
 prescription_map <- prescription_data %>%
-  inner_join(usa_states, by = c("state" = "region"))
+  inner_join(usa_states, by = c("state" = "region")) %>%
+  rename(`Prescription Rate` = prescription_rate)
 
 # ui 
 ui <- fluidPage( 
@@ -82,7 +85,7 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs", 
                   tabPanel("Prescription Rate vs. Overdose Rate",
                            HTML("<p>Is there a correlation between opioid prescription rate and overdose death rate?</p>"),
-                           plotOutput("prescriptions")
+                           plotlyOutput("prescriptions")
                   ),
                   tabPanel("Clustering",
                            HTML("<p>Something about clustering"),
@@ -110,10 +113,10 @@ server <- function(input, output){
     }
   })
   
-  output$prescriptions <- renderPlot({
-    
+  output$prescriptions <- renderPlotly({
+    ggplotly(
     ggplot(prescription_graph(), aes(x = long, y = lat, group = group
-                              , fill = prescription_rate)) +
+                              , fill = `Prescription Rate`)) +
       geom_polygon(color = "white") +
       theme_void() +
       coord_fixed(ratio = 1.3) +
@@ -121,8 +124,8 @@ server <- function(input, output){
            subtitle = "MME Prescribed per 100 People",
            fill = "") +
       theme(legend.position="bottom") +
-      scale_fill_distiller(palette = 1, direction = 2)
-    
+      scale_fill_distiller(palette = "Oranges", direction = 2)
+    )
   })
   
   clustering_data <- reactive({
