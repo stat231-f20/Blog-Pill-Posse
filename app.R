@@ -6,14 +6,16 @@ library(shinyWidgets)
 library(plotly)
 library(maps)
 library(datasets)
-library(ggrepel)
+library(ggrepel) 
 
 # Read in Data
 prescription_data <- readRDS(file = "prescription_data.rds")
 overdose_data <- readRDS(file = "all_overdoses.rds")
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
-  janitor::clean_names() 
+  janitor::clean_names() %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(-c(year_std, prescription_rate, age_adjusted_rate))
   
 # Set up map data
 usa_states <- map_data(map = "state"                       
@@ -134,7 +136,7 @@ server <- function(input, output){
     else {
       clustering_data <- clustering_data %>% 
         group_by(state) %>% 
-        summarise(prescription_rate = mean(prescription_rate), age_adjusted_rate = mean(age_adjusted_rate))
+        summarise(prescription_rate_std = mean(prescription_rate_std), age_adjusted_rate_std = mean(age_adjusted_rate_std))
     }
   }) 
   
@@ -155,11 +157,11 @@ server <- function(input, output){
     
     data <- mutate(data, cluster = as.character(km$cluster))
     
-    ggplot(data = data, aes(x = prescription_rate, y = age_adjusted_rate)) + 
+    ggplot(data = data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
       geom_point(aes(color = cluster)) +
       geom_text_repel(aes(label = state, color = cluster), size = 3) +
       geom_point(data = as.data.frame(km$centers)
-                 , aes(x = prescription_rate, y = age_adjusted_rate)
+                 , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
                  , pch = "X"
                  , size = 3) +
       labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment")
