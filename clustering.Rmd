@@ -20,8 +20,11 @@ overdose_data <- readRDS("all_overdoses.rds")
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
-  filter(year == 2014) %>% 
-  select(-c(year))
+  mutate(pres_std = scale(prescription_rate)
+         , age_adj_std = scale(age_adjusted_rate)) %>%
+  filter(year == 2018) %>% 
+  select(state, pres_std, age_adj_std, prescription_rate
+         , age_adjusted_rate)
 
 silhouette_score <- function(k){
   km <- kmeans(full_data[,2:3], centers = k, nstart = 20)
@@ -37,11 +40,13 @@ km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
 
 full_data <- mutate(full_data, cluster = as.character(km$cluster))
 
-ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) + 
+#ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) + 
+ggplot(data = full_data, aes(x = pres_std, y = age_adj_std)) +
   geom_point(aes(color = cluster)) +
   geom_text_repel(aes(label = state, color = cluster), size = 3) +
   geom_point(data = as.data.frame(km$centers)
-             , aes(x = prescription_rate, y = age_adjusted_rate)
+             #, aes(x = prescription_rate, y = age_adjusted_rate)
+             , aes(x = pres_std, y = age_adj_std)
              , pch = "X"
              , size = 3) +
   labs(x = "Average Prescription Rate", y = "Average Age Adjusted Overdose Rate", color = "Cluster Assignment")
