@@ -126,7 +126,7 @@ server <- function(input, output){
     ggplotly(
       ggplot(prescription_graph(), aes(x = long, y = lat, group = group, 
                                        fill = `Prescription Rate`)) +
-        geom_polygon(color = "white") +
+        geom_polygon(color = "white", aes(text = paste0('<b>State</b>: ', str_to_title(state), '<br>', '<b>Prescription Rate: ', `Prescription Rate`))) +
         theme_void() +
         coord_fixed(ratio = 1.3) +
         labs(fill = "Prescription Rate") +
@@ -136,7 +136,8 @@ server <- function(input, output){
           input$year == "ALL",
           paste("Average Opioid Prescription Rates From 2014-2018"),
           paste("Opioid Prescription Rates in", input$year)
-        )) 
+        )),
+      tooltip = "text"
     )
   })
   
@@ -165,7 +166,7 @@ server <- function(input, output){
     ggplotly(
       ggplot(overdose_graph(), aes(x = long, y = lat, group = group,
                                    fill = `Overdose Rate`)) +
-        geom_polygon(color = "white") +
+        geom_polygon(color = "white", aes(text = paste0('<b>State</b>: ', str_to_title(State), '<br>', '<b>Overdose Rate: ', `Overdose Rate`))) +
         theme_void() +
         coord_fixed(ratio = 1.3) +
         labs(fill = "Overdose Rate") +
@@ -175,7 +176,8 @@ server <- function(input, output){
           paste("Average Opioid Overdose Rates From 2014-2018"),
           paste("Opioid Overdose Rates in", input$year)
         )) +
-        scale_fill_distiller(palette = "Blues", direction = 2)
+        scale_fill_distiller(palette = "Blues", direction = 2),
+      tooltip = "text"
     )
   })
   
