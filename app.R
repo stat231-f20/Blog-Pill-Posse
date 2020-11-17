@@ -83,7 +83,7 @@ ui <- fluidPage(
                            plotlyOutput("overdoses")
                   ),
                   tabPanel("K-Means Clustering",
-                           HTML("<p>We used k-means clustering to determine similiar opioid characteristics among states. The first visualization is the elbow plot for the given year, and you can use this to aid you in choosing a k value for the clustering. The second visualizations depicts states colored by cluster number."),
+                           HTML("<p>We used k-means clustering to determine similiar opioid characteristics among states. The first visualization is the elbow plot for the given year - you can use this to aid you in choosing a k value for the clustering. The second visualization depicts states colored by cluster number."),
                            plotOutput("elbow"),
                            div(style = "margin-bottom: 15px;"),
                            selectInput(inputId = "k",
