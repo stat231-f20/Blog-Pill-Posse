@@ -9,22 +9,82 @@ output:
     highlight: NULL
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 library(tidyverse)
 library(ggplot2)
+library(plotly)
 ```
 
 # Introduction (Tamer)
 
-## Prescription Rates (Tamer)
+The Opioid Crisis is truly that - a crisis. Over the past 20 years, 
 
-## Overdose Rates (Tamer)
+## Prescription Rate Data (Tamer)
+
+## Overdose Rate Data (Chris)
 
 # Prescription Rate vs. Overdose Rate (Chris)
 
 1. Show maps
 2. Ask Questions about whether one causes the other, etc.
+
+```{r, include = FALSE, warning=FALSE}
+
+# Read in data
+prescription_data <- readRDS(file = "prescription_data.rds")
+overdose_data <- readRDS(file = "all_overdoses.rds")
+  
+# Initialize map data
+usa_states <- map_data(map = "state", region = ".")
+
+# Join map data to other data
+prescription_map <- prescription_data %>% 
+        filter(year == "2014") %>% 
+        inner_join(usa_states, by = c("state" = "region")) %>%
+        rename(`Prescription Rate` = prescription_rate)
+overdose_map <- overdose_data %>% 
+        filter(year == "2014") %>% 
+        mutate(State = tolower(State)) %>% 
+        inner_join(usa_states, by = c("State" = "region")) %>% 
+        rename(`Overdose Rate` = Age.Adjusted.Rate)
+
+```
+
+```{r, echo=FALSE, warning=FALSE}
+# Plot 2014 Prescription Rate data
+ggplotly(
+      ggplot(prescription_map, aes(x = long, y = lat, group = group, 
+                                       fill = `Prescription Rate`)) +
+        geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
+        theme_void() +
+        coord_fixed(ratio = 1.3) +
+        labs(fill = "Prescription Rate") +
+        theme(legend.position = "bottom") +
+        scale_fill_distiller(palette = "Oranges", direction = 2) + 
+        ggtitle("Opioid Prescription Rates - 2014")
+        )
+
+# Plot 2014 Overdose Rate data  
+ggplotly(
+  ggplot(overdose_map, aes(x = long, y = lat, group = group,
+                                   fill = `Overdose Rate`)) +
+        geom_polygon(color = "white", 
+                     aes(text = paste0('State: ', 
+                                      str_to_title(State), 
+                                      '<br>', 
+                                      'Deaths: ', Deaths))) +
+        theme_void() +
+        coord_fixed(ratio = 1.3) +
+        labs(fill = "Overdose Rate") +
+        theme(legend.position = "bottom") +
+        ggtitle("Opioid Overdose Rates - 2014") +
+        scale_fill_distiller(palette = "Blues", direction = 2)
+        )
+
+      
+```      
+
 
 ## Relationship between the two? (Tamer - regression, Chris)
 
