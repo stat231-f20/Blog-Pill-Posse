@@ -80,17 +80,12 @@ ui <- fluidPage(
                            HTML("<p>The visualization below depicts the opioid prescription rate across the U.S. for a given year. The prescription rate is defined as MME (Morphine Milligram Equivalents) prescribed per 100 people. This visualization is interactive - you can hover over a particular state and see its prescription rate.</p>"),
                            plotlyOutput("prescriptions"),
                            div(style = "margin-bottom: 15px;"),
-                           HTML("<p>The visualization below depicts the opioid overdose rate across the U.S. for a given year. The overdose rate is defined as INSERT HERE. This visualization is also interactive - you can hover over a particular state to see the number of deaths and its age adjusted overdose rate."),
+                           HTML("<p>The visualization below depicts the opioid overdose rate across the U.S. for a given year. The overdose rate is adjusted for differences in age distributions. This visualization is also interactive - you can hover over a particular state to see the number of deaths and its age adjusted overdose rate."),
                            plotlyOutput("overdoses")
                   ),
                   tabPanel("K-Means Clustering",
                            HTML("<p>We used k-means clustering to determine similiar opioid characteristics among states. The first visualization is the elbow plot for the given year - you can use this to aid you in choosing a k value for the clustering. The second visualization depicts states colored by cluster number."),
-                           plotOutput("elbow"),
-                           div(style = "margin-bottom: 15px;"),
-                           selectInput(inputId = "k",
-                                       label = "Choose a k value for clustering:",
-                                       choices = c(2:10)
-                           ),
+                           plotOutput("clusterplot"),
                            div(style = "margin-bottom: 15px;"),
                            plotOutput("clustermap")     
                   )
@@ -202,27 +197,50 @@ server <- function(input, output){
     }
   }) 
   
-  output$elbow <- renderPlot({
+  output$clusterplot <- renderPlot({
+    set.seed(1106)
     data <- clustering_data()
-    fig <- matrix(NA, nrow=10, ncol=2)
-    for (i in 1:10){
-      fig[i,1] <- i
-      fig[i,2] <- kmeans(data[, 2:3], 
-                         centers=i,
-                         nstart=20)$tot.withinss
+    silhouette_score <- function(k){
+      km <- kmeans(data[,2:3], centers = k, nstart = 20)
+      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
+      mean(score[, 3])
     }
     
-    ggplot(data = as.data.frame(fig), aes(x = V1, y = V2)) +
-      geom_point() + 
-      geom_line() +
-      scale_x_continuous(breaks=c(1:10)) +
-      labs(x = "K", y = expression("Total W"[k])) +
-      ggtitle("Elbow Plot to Determine Optimal K")
+    k <- 2:5
+    avg_sil <- sapply(k, silhouette_score)
+    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+    
+    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
+    
+    data <- mutate(data, 
+                   cluster = as.character(km$cluster),
+                   state = str_to_title(state))
+    
+    ggplot(data = data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+      geom_point(aes(color = cluster)) +
+      geom_text_repel(aes(label = state, color = cluster), size = 3) +
+      geom_point(data = as.data.frame(km$centers)
+                 , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+                 , pch = "X"
+                 , size = 3) +
+      labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment")
   })
   
   output$clustermap <- renderPlot({
+    set.seed(1106)
     data <- clustering_data()
-    km <- kmeans(data[, 2:3], centers = input$k, nstart = 20)
+    silhouette_score <- function(k){
+      km <- kmeans(data[, 2:3], centers = k, nstart = 20)
+      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
+      mean(score[, 3])
+    }
+    
+    k <- 2:5
+    avg_sil <- sapply(k, silhouette_score)
+    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+    
+    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
+    
     data <- mutate(data, cluster = as.character(km$cluster))
     cluster_map <- data %>%
       inner_join(usa_states, by = c("state" = "region"))
