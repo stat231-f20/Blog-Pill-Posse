@@ -77,9 +77,10 @@ ui <- fluidPage(
       add_busy_spinner(spin = "double-bounce"), # let user know things may take a while to load
       tabsetPanel(type = "tabs", 
                   tabPanel("Prescription Rate vs. Overdose Rate",
-                           HTML("<p>The first visualization depicts the opioid prescription rate across the U.S. for a given year, and the second visualization depicts the opioid overdose rate across the U.S. for a given year. The prescription rate is defined as MME (Morphine Milligram Equivalents) prescribed per 100 people, and the overdose rate is defined as INSERT HERE. Both of the plots are interactive - you can hover over a particular state and see its prescription rate/overdose rate.</p>"),
+                           HTML("<p>The visualization below depicts the opioid prescription rate across the U.S. for a given year. The prescription rate is defined as MME (Morphine Milligram Equivalents) prescribed per 100 people. This visualization is interactive - you can hover over a particular state and see its prescription rate.</p>"),
                            plotlyOutput("prescriptions"),
                            div(style = "margin-bottom: 15px;"),
+                           HTML("<p>The visualization below depicts the opioid overdose rate across the U.S. for a given year. The overdose rate is defined as INSERT HERE. This visualization is also interactive - you can hover over a particular state to see the number of deaths and its age adjusted overdose rate."),
                            plotlyOutput("overdoses")
                   ),
                   tabPanel("K-Means Clustering",
@@ -156,7 +157,7 @@ server <- function(input, output){
       overdose_map <- overdose_map %>% 
         mutate(State = tolower(State)) %>% 
         group_by(State) %>% 
-        summarise(Age.Adjusted.Rate = mean(Age.Adjusted.Rate)) %>% 
+        summarise(Age.Adjusted.Rate = mean(Age.Adjusted.Rate), Deaths = sum(as.numeric(Deaths))) %>% 
         inner_join(usa_states, by = c("State" = "region")) %>%
         rename(`Overdose Rate` = `Age.Adjusted.Rate`)
     }
@@ -166,7 +167,9 @@ server <- function(input, output){
     ggplotly(
       ggplot(overdose_graph(), aes(x = long, y = lat, group = group,
                                    fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", aes(text = paste0('<b>State</b>: ', str_to_title(State), '<br>', '<b>Overdose Rate: ', `Overdose Rate`))) +
+        geom_polygon(color = "white", aes(text = paste0('<b>State</b>: ', str_to_title(State), '<br>', 
+                                                        '<b>Deaths</b>: ', Deaths, '<br>',
+                                                        '<b>Overdose Rate</b>: ', `Overdose Rate`))) +
         theme_void() +
         coord_fixed(ratio = 1.3) +
         labs(fill = "Overdose Rate") +
