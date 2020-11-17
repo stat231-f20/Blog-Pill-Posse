@@ -155,9 +155,10 @@ server <- function(input, output){
     }
     else {
       overdose_map <- overdose_map %>% 
-        mutate(State = tolower(State)) %>% 
+        mutate(State = tolower(State),
+               Deaths = gsub(",", "", Deaths)) %>% 
         group_by(State) %>% 
-        summarise(Age.Adjusted.Rate = mean(Age.Adjusted.Rate), Deaths = sum(as.numeric(Deaths))) %>% 
+        summarise(Age.Adjusted.Rate = mean(Age.Adjusted.Rate), Deaths = sum(as.numeric(as.character(Deaths)))) %>% 
         inner_join(usa_states, by = c("State" = "region")) %>%
         rename(`Overdose Rate` = `Age.Adjusted.Rate`)
     }
