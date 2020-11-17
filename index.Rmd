@@ -86,13 +86,15 @@ ggplotly(
 ```      
 
 
-## Relationship between the two? (Tamer - regression, Chris)
+## Analysis
+
+### Regression
 
 ```{r}
 # scatter / regression between prescription rate and overdose rate
 ```
 
 
-## Problem States / Clustering (Sean)
+### Problem States / Clustering (Sean)
 
 # Conclusion (Chris, Sean)
