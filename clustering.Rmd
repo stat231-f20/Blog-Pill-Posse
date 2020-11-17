@@ -17,7 +17,6 @@ prescription_data <- readRDS("prescription_data.rds")
 overdose_data <- readRDS("all_overdoses.rds")
 
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
-  select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
   filter(year == 2016) %>% 
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
