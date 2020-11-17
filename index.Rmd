@@ -104,6 +104,12 @@ mosaic::msummary(mod)
 ```
 
 ```{r}
+ggplot(data = full_data, aes(x = prescription_rate)) +
+  geom_histogram(bins = 15)
+```
+
+
+```{r}
 ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
   geom_point() + 
   geom_abline(intercept = 7.56323, slope = 0.10475)
