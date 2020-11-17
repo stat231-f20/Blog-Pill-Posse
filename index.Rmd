@@ -29,11 +29,18 @@ The Opioid Crisis is truly that - a crisis. Over the past 20 years,
 1. Show maps
 2. Ask Questions about whether one causes the other, etc.
 
-```{r, include = FALSE, warning=FALSE}
+```{r, include = FALSE, warning = FALSE}
 
 # Read in data
 prescription_data <- readRDS(file = "prescription_data.rds")
 overdose_data <- readRDS(file = "all_overdoses.rds")
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>%
+  select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
+  janitor::clean_names() %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(-c(year_std)) %>%
+  mutate(state = tolower(state)) %>% 
+  filter(year == 2014)
   
 # Initialize map data
 usa_states <- map_data(map = "state", region = ".")
@@ -88,8 +95,16 @@ ggplotly(
 
 ## Relationship between the two? (Tamer - regression, Chris)
 
-```{r}
+```{r warning = FALSE}
 # scatter / regression between prescription rate and overdose rate
+mod <- lm(age_adjusted_rate ~ prescription_rate, data = full_data)
+mosaic::msummary(mod)
+```
+
+```{r}
+ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
+  geom_point() + 
+  geom_abline(intercept = 7.56323, slope = 0.10475)
 ```
 
 
