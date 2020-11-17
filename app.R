@@ -1,38 +1,25 @@
 library(tidyverse)
 library(shiny)
 library(shinybusy)
-library(mdsr)
 library(shinyWidgets)
 library(plotly)
 library(maps)
-library(datasets)
 library(ggrepel) 
-library(viridis)
 
-# Read in Data
+# Read in data
 prescription_data <- readRDS(file = "prescription_data.rds")
 overdose_data <- readRDS(file = "all_overdoses.rds")
+
+# Wrangle data for clustering
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(-c(year_std, prescription_rate, age_adjusted_rate)) %>%
-  rename(`Prescription Rate` = prescription_rate,
-         `Overdose Rate` = age_adjusted_rate)
+  select(-c(year_std, prescription_rate, age_adjusted_rate)) %>% 
+  mutate(state = tolower(state))
   
-# Set up map data
-usa_states <- map_data(map = "state"                       
-                       , region = ".")
-
-# Join map data to prescription data
-prescription_map <- prescription_data %>%
-  inner_join(usa_states, by = c("state" = "region")) %>%
-  rename(`Prescription Rate` = prescription_rate)
-
-# Join map data to Overdose data
-colnames(overdose_data)[1] <- "region"
-overdose_data[[1]] <- tolower(overdose_data[[1]])
-overdose_map<- inner_join(usa_states, overdose_data)
+# Initialize map data
+usa_states <- map_data(map = "state", region = ".")
 
 # ui 
 ui <- fluidPage( 
@@ -71,7 +58,7 @@ ui <- fluidPage(
     "))
   ),
   
-  HTML("<h1>Opioid Overdose Analysis</h1>
+  HTML("<h1>Opioid Analysis From 2014-2018</h1>
         <h3>Pill Posse: Sean Wei, Tamer Sullivan, Chris Murphy</h3>"),
   
   sidebarLayout(
@@ -90,16 +77,21 @@ ui <- fluidPage(
       add_busy_spinner(spin = "double-bounce"), # let user know things may take a while to load
       tabsetPanel(type = "tabs", 
                   tabPanel("Prescription Rate vs. Overdose Rate",
-                           HTML("<p>Is there a correlation between opioid prescription rate and overdose death rate?</p>"),
-                           plotlyOutput("prescriptions")
+                           HTML("<p>The first visualization depicts the opioid prescription rate across the U.S. for a given year, and the second visualization depicts the opioid overdose rate across the U.S. for a given year. The prescription rate is defined as MME (Morphine Milligram Equivalents) prescribed per 100 people, and the overdose rate is defined as INSERT HERE. Both of the plots are interactive - you can hover over a particular state and see its prescription rate/overdose rate.</p>"),
+                           plotlyOutput("prescriptions"),
+                           div(style = "margin-bottom: 15px;"),
+                           plotlyOutput("overdoses")
                   ),
-                  tabPanel("Clustering",
-                           HTML("<p>Something about clustering"),
-                           plotOutput("clusters"),
+                  tabPanel("K-Means Clustering",
+                           HTML("<p>We used k-means clustering to determine similiar opioid characteristics among states. The first visualization is the elbow plot for the given year, and you can use this to aid you in choosing a k value for the clustering. The second visualizations depicts states colored by cluster number."),
+                           plotOutput("elbow"),
+                           div(style = "margin-bottom: 15px;"),
+                           selectInput(inputId = "k",
+                                       label = "Choose a k value for clustering:",
+                                       choices = c(2:10)
+                           ),
+                           div(style = "margin-bottom: 15px;"),
                            plotOutput("clustermap")     
-                  ),
-                  tabPanel("Opioid Deaths rate by State",
-                                plotlyOutput("overdoses")
                   )
               
       )
@@ -110,34 +102,84 @@ ui <- fluidPage(
 # server
 server <- function(input, output){ 
   
-  # Tamer's Tab
+  # Tamer's Portion
   prescription_graph <- reactive({
-    prescription_map <- prescription_map %>% 
+    prescription_map <- prescription_data %>% 
       req(input$year) 
     if (input$year != "ALL") {
       prescription_map <- prescription_map %>% 
-        filter(year == input$year) 
+        filter(year == input$year) %>% 
+        inner_join(usa_states, by = c("state" = "region")) %>%
+        rename(`Prescription Rate` = prescription_rate)
     }
     else {
-      prescription_map <- prescription_map
+      prescription_map <- prescription_map %>% 
+        group_by(state) %>% 
+        # If there is no filter, average all the values
+        summarise(prescription_rate = mean(prescription_rate)) %>% 
+        inner_join(usa_states, by = c("state" = "region")) %>%
+        rename(`Prescription Rate` = prescription_rate)
     }
   })
   
   output$prescriptions <- renderPlotly({
     ggplotly(
-    ggplot(prescription_graph(), aes(x = long, y = lat, group = group
-                              , fill = `Prescription Rate`)) +
-      geom_polygon(color = "white") +
-      theme_void() +
-      coord_fixed(ratio = 1.3) +
-      labs(title = "Opioid Prescription Rate by State",
-           subtitle = "MME Prescribed per 100 People",
-           fill = "") +
-      theme(legend.position="bottom") +
-      scale_fill_distiller(palette = "Oranges", direction = 2)
+      ggplot(prescription_graph(), aes(x = long, y = lat, group = group, 
+                                       fill = `Prescription Rate`)) +
+        geom_polygon(color = "white") +
+        theme_void() +
+        coord_fixed(ratio = 1.3) +
+        labs(fill = "Prescription Rate") +
+        theme(legend.position = "bottom") +
+        scale_fill_distiller(palette = "Oranges", direction = 2) + 
+        ggtitle(ifelse(
+          input$year == "ALL",
+          paste("Average Opioid Prescription Rates From 2014-2018"),
+          paste("Opioid Prescription Rates in", input$year)
+        )) 
     )
   })
   
+  # Chris' Portion
+  overdose_graph <- reactive({
+    overdose_map <- overdose_data %>% 
+      req(input$year) 
+    if (input$year != "ALL") {
+      overdose_map <- overdose_map %>% 
+        filter(year == input$year) %>% 
+        mutate(State = tolower(State)) %>% 
+        inner_join(usa_states, by = c("State" = "region")) %>% 
+        rename(`Overdose Rate` = Age.Adjusted.Rate)
+    }
+    else {
+      overdose_map <- overdose_map %>% 
+        mutate(State = tolower(State)) %>% 
+        group_by(State) %>% 
+        summarise(Age.Adjusted.Rate = mean(Age.Adjusted.Rate)) %>% 
+        inner_join(usa_states, by = c("State" = "region")) %>%
+        rename(`Overdose Rate` = `Age.Adjusted.Rate`)
+    }
+  })
+  
+  output$overdoses <- renderPlotly({
+    ggplotly(
+      ggplot(overdose_graph(), aes(x = long, y = lat, group = group,
+                                   fill = `Overdose Rate`)) +
+        geom_polygon(color = "white") +
+        theme_void() +
+        coord_fixed(ratio = 1.3) +
+        labs(fill = "Overdose Rate") +
+        theme(legend.position = "bottom") +
+        ggtitle(ifelse(
+          input$year == "ALL",
+          paste("Average Opioid Overdose Rates From 2014-2018"),
+          paste("Opioid Overdose Rates in", input$year)
+        )) +
+        scale_fill_distiller(palette = "Blues", direction = 2)
+    )
+  })
+  
+  # Sean's Portion
   clustering_data <- reactive({
     clustering_data <- full_data %>% 
       req(input$year)
@@ -149,96 +191,45 @@ server <- function(input, output){
     else {
       clustering_data <- clustering_data %>% 
         group_by(state) %>% 
+        # If there is no filter, average all the values
         summarise(prescription_rate_std = mean(prescription_rate_std), age_adjusted_rate_std = mean(age_adjusted_rate_std))
     }
   }) 
   
-  output$clusters <- renderPlot({
-    set.seed(1106)
+  output$elbow <- renderPlot({
     data <- clustering_data()
-    silhouette_score <- function(k){
-      km <- kmeans(data[,2:3], centers = k, nstart = 20)
-      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
-      mean(score[, 3])
+    fig <- matrix(NA, nrow=10, ncol=2)
+    for (i in 1:10){
+      fig[i,1] <- i
+      fig[i,2] <- kmeans(data[, 2:3], 
+                         centers=i,
+                         nstart=20)$tot.withinss
     }
     
-    k <- 2:10
-    avg_sil <- sapply(k, silhouette_score)
-    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
-    
-    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
-    
-    data <- mutate(data, cluster = as.character(km$cluster))
-    
-    ggplot(data = data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
-      geom_point(aes(color = cluster)) +
-      geom_text_repel(aes(label = state, color = cluster), size = 3) +
-      geom_point(data = as.data.frame(km$centers)
-                 , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
-                 , pch = "X"
-                 , size = 3) +
-      labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment")
+    ggplot(data = as.data.frame(fig), aes(x = V1, y = V2)) +
+      geom_point() + 
+      geom_line() +
+      scale_x_continuous(breaks=c(1:10)) +
+      labs(x = "K", y = expression("Total W"[k])) +
+      ggtitle("Elbow Plot to Determine Optimal K")
   })
   
   output$clustermap <- renderPlot({
-    set.seed(1106)
     data <- clustering_data()
-    silhouette_score <- function(k){
-      km <- kmeans(data[,2:3], centers = k, nstart = 20)
-      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
-      mean(score[, 3])
-    }
-    
-    k <- 2:10
-    avg_sil <- sapply(k, silhouette_score)
-    optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
-    
-    km <- kmeans(data[, 2:3], centers = optimal_k, nstart = 20)
-    
+    km <- kmeans(data[, 2:3], centers = input$k, nstart = 20)
     data <- mutate(data, cluster = as.character(km$cluster))
-    
-    usa_states <- map_data(map = "state", region = ".") %>% 
-      mutate(state = stringr::str_to_title(region))
-    
     cluster_map <- data %>%
-      inner_join(usa_states, by = "state")
+      inner_join(usa_states, by = c("state" = "region"))
     
     ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
       geom_polygon(color = "white") +
       theme_void() +
       coord_fixed(ratio = 1.3) +
-      labs(title = "Opioid Prescription Rate by State",
-           subtitle = "MME Prescribed per 100 People",
-           fill = "") +
-      theme(legend.position="right")
-    
+      labs(title = "Visualizing the Clusters",
+           fill = "Cluster #") +
+      theme(legend.position = "right")
   })
-    
-    # Chris' Tab
-    overdose_graph <- reactive({
-      data <-overdose_map %>% 
-        req(input$year) 
-      if (input$year != "ALL") {
-        data <- overdose_map %>% 
-          filter(year == input$year) 
-      }
-      else {
-        data <- overdose_map
-      }
-    })
-    output$overdoses <- renderPlotly({
-      ggplotly(
-        ggplot(overdose_graph(), aes(x = long, y = lat, group = group,
-                               fill = Age.Adjusted.Rate)) +
-          geom_polygon(color = "white") +
-          theme_void() +
-          coord_fixed(ratio = 1.3) +
-          labs(fill = "Age Adjusted DR") +
-          scale_fill_viridis(option = "magma", direction = -1)+
-          theme(legend.position="right")+
-          ggtitle(label = "Overdose Rates in the United States")
-      )
-    })
+
 }
 
 # call to shinyApp
