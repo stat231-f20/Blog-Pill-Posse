@@ -67,6 +67,9 @@ overdose_map <- overdose_data %>%
         mutate(State = tolower(State)) %>% 
         inner_join(usa_states, by = c("State" = "region")) %>% 
         rename(`Overdose Rate` = Age.Adjusted.Rate)
+west_virginia_data <- west_virginia_data%>%
+  filter(Year == 2014)%>%
+  rename(`Prescription Rate` = Prescription_Rate)
 
 ```
 
@@ -85,10 +88,8 @@ ggplotly(
 )
 
 # Plot 2014 West Virginia Counties Data
-west_virginia_data <- west_virginia_data%>%
-  filter(Year == 2014)
 ggplotly(
-  ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = Prescription_Rate)) +
+  ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
     geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
     theme_void()  +
     theme(legend.position="right")+
