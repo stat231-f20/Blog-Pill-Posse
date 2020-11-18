@@ -1,6 +1,5 @@
 ---
 title: "The Opioid Epidemic"
-subtitle: "Prescription Rate vs. Overdose Rate"
 author: "Chris Murphy, Tamer Sullivan, and Sean Wei"
 date: "11/19/2020"
 output:
@@ -10,37 +9,42 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 library(tidyverse)
-library(ggplot2)
 library(plotly)
+library(ggrepel)
+library(maps)
+library(mosaic)
+
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 ```
 
 # Introduction (Tamer)
 
 The Opioid Crisis is truly that - a crisis. Over the past 20 years, 
 
+# Data
+
 ## Prescription Rate Data (Tamer)
 
 ## Overdose Rate Data (Chris)
 
-# Prescription Rate vs. Overdose Rate (Chris)
+# Analysis
+
+## Prescription Rate vs. Overdose Rate (Chris)
 
 1. Show maps
 2. Ask Questions about whether one causes the other, etc.
 
 ```{r, include = FALSE, warning = FALSE}
-
 # Read in data
 prescription_data <- readRDS(file = "prescription_data.rds")
 overdose_data <- readRDS(file = "all_overdoses.rds")
-full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>%
-  select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
+
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   janitor::clean_names() %>% 
+  filter(year == 2014) %>% 
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(-c(year_std)) %>%
-  mutate(state = tolower(state)) %>% 
-  filter(year == 2014)
+  select(state, prescription_rate_std, age_adjusted_rate_std, prescription_rate, age_adjusted_rate)
   
 # Initialize map data
 usa_states <- map_data(map = "state", region = ".")
@@ -70,7 +74,7 @@ ggplotly(
         theme(legend.position = "bottom") +
         scale_fill_distiller(palette = "Oranges", direction = 2) + 
         ggtitle("Opioid Prescription Rates - 2014")
-        )
+)
 
 # Plot 2014 Overdose Rate data  
 ggplotly(
@@ -87,20 +91,15 @@ ggplotly(
         theme(legend.position = "bottom") +
         ggtitle("Opioid Overdose Rates - 2014") +
         scale_fill_distiller(palette = "Blues", direction = 2)
-        )
-
-      
+)
 ```      
 
-
-## Analysis
-
-### Regression
+## Regression
 
 ```{r warning = FALSE}
 # scatter / regression between prescription rate and overdose rate
 mod <- lm(age_adjusted_rate ~ prescription_rate, data = full_data)
-mosaic::msummary(mod)
+msummary(mod)
 ```
 
 ```{r}
@@ -116,6 +115,61 @@ ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
 ```
 
 
-### Problem States / Clustering (Sean)
+# Clustering (Sean)
+
+Text explaining why k-means
+
+## Determining the Optimal K
+
+Explain silhouette score
+
+```{r}
+silhouette_score <- function(k){
+  km <- kmeans(full_data[, 2:3], centers = k, nstart = 20)
+  score <- cluster::silhouette(km$cluster, dist(full_data[, 2:3]))
+  mean(score[, 3])
+}
+
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+optimal_k
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
+full_data <- mutate(full_data, cluster = as.character(km$cluster))
+```
+
+## Clustering for 2014
+
+```{r echo = FALSE}
+ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+  geom_point(aes(color = cluster)) +
+  geom_text_repel(aes(label = state, color = cluster), size = 3) +
+  geom_point(data = as.data.frame(km$centers)
+             , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+             , pch = "X"
+             , size = 3) +
+  labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment") + 
+  ggtitle("Clustering for 2014")
+```
+
+```{r echo = FALSE}
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Opioid Prescription Rate by State",
+           subtitle = "MME Prescribed per 100 People",
+           fill = "") +
+      theme(legend.position="right")
+```
+
+text about the clustering
 
 # Conclusion (Chris, Sean)
