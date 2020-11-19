@@ -27,7 +27,7 @@ The amount of opioids prescribed began growing a lot in 2006 and peaked in 2012 
 ![image](images/Opioid-deaths-timeline.png)
 The mechanism by which legitimate prescriptions may lead someone down the path to opioid abuse and potentially overdosing is one of addiction. When someone is legally prescribed opioids (potentially an excessive number of doses) they are subject to developing an addiction. If they do, then they may go searching for more opioids after their prescription runs out. The most common replacements are drugs like heroin and fentanyl. Heroin and fentanyl, which is over 100 times the strength of morphine - a notoriously powerful painkiller, are very strong opioids that can very easily lead to overdose even after just one use. It is also worth noting that even prescription opioids cause deaths, not just the super strong types. 
 
-For this project, we wanted to explore the relationship between opioid prescription rate and overdose rate, figure out which (if there are any) states are disproportionately affected, and 
+For this project, we wanted to explore the relationship between opioid prescription rate and overdose rate and figure out which (if there are any) states that are disproportionately affected. 
 
 # Data
 
