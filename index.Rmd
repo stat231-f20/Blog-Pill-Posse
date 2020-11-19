@@ -38,7 +38,7 @@ The data we used to determine the prescription rate for each state comes from th
 
 ## Overdose Rate Data 
 
-The data we used to find the Overdose Rate also came from the CDS website linked [here](https://www.cdc.gov/drugoverdose/data/statedeaths.html). It includes overdose data from each state with columns that include, State name, death rate range, the age adjusted overdose rate and total number of overdose deaths. We used the age adjusted overdose rate as our fill category in the maps below and it can be defined as: a death rate that controls for the effects of differences in population age distributions. 
+The data we used to find the Overdose Rate also came from the CDC website linked [here](https://www.cdc.gov/drugoverdose/data/statedeaths.html). It includes overdose data from each state with columns that include, State name, death rate range, the age adjusted overdose rate and total number of overdose deaths. We used the age adjusted overdose rate as our fill category in the maps below and it can be defined as: a death rate that controls for the effects of differences in population age distributions. 
 
 # Prescription Rate vs. Overdose Rate
 
