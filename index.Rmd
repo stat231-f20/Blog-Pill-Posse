@@ -297,7 +297,9 @@ ggplotly(
 ```
 
 ## Analysis
-With these maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.
+In the first maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons in 2014. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.
+
+The next graphs are the Overdose rates per state from 2014 to 2018. Here we can see that overdoses have been substantially increasing each year since 2014. What's interesting here is that many states with high prescription rates also have very high overdose rates which alludes to the possibility that prescription rate may contribute to the overdose rate in a state. West Virginia is known for having the worst opioid problem in the United States and the overdose rate here increases from 35.5 to 51.5 over the five year span. The opioid crisis is getting worse every year however, if states continue to keep lowering their prescription rates perhaps this can help to solve the problem. 
 
 # Regression
 
@@ -582,6 +584,9 @@ In the clustering graph, states in the top right quadrant are classified as high
 
 ## Answering Questions
 1. How do prescription rates affect overdose rates in every state?
+
+Looking at each year individually, it's clear that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with the linear regression model, it's fair to say that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rate. If you take a look at the beginning of the the opioid epidemic in the US, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand leading to a tremendous amount of opioid addicted US citizens. 
+
 2. Which states seem to have been most impacted by the opioid crisis?
 
 Throughout 2014-2018, the states most strongly impacted by the opioid epidemic are primarily located across the east and south-eastern United States. In particular, southern states are consistently grouped together as high risk (with high rates of prescriptions and overdoses). Notably, West Virginia was constantly among the highest risk states.
@@ -591,10 +596,12 @@ It is interesting to note that the general pattern of high risk states located i
 ![Image of stroke belt - https://www.cdc.gov/stroke/maps_data.htm](images/stroke_map.jpg)
 
 
-3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored? - urban vs rural, access to hospitals (sean's ideas)
+3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored? 
+
+Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availiblity, poverty, access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
 
 ## Next Steps
-We think next steps for our project could include going down to the county level and analyzing  the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. Here’s a look into what a map of West Virginia would look like if we continued with our next steps.
+We think next steps for our project could include going down to the county level and further exploring the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. For example, identifying which counties are mostly affected by the epidemic could help the state in providing funds and aid to the counties in need. Here’s a look into what a map of prescription rates in West Virginia would look like if we continued with our next steps.
 
 ```{r, echo=FALSE, warning=FALSE}
 # Plot 2014 West Virginia Counties Data
@@ -608,3 +615,5 @@ ggplotly(
   ggtitle(label = "Prescription Rates in West Virgnia 2014")
 )
 ```
+
+Other next steps could include analyzing more variables we believe could potentially contribute to the ever increasing severity of the opioid epidemic in the United States. 
