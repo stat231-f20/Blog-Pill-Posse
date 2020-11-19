@@ -14,10 +14,8 @@ overdose_data <- readRDS(file = "all_overdoses.rds")
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   select(State, year, prescription_rate, Age.Adjusted.Rate) %>% 
   janitor::clean_names() %>% 
-  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(-c(year_std, prescription_rate, age_adjusted_rate)) %>% 
   mutate(state = tolower(state))
-  
+
 # Initialize map data
 usa_states <- map_data(map = "state", region = ".")
 
@@ -90,7 +88,7 @@ ui <- fluidPage(
                            HTML("<p>The second visualization depicts the states colored by cluster number, which is based off of the scatterplot above.</p>"),
                            plotOutput("clustermap")     
                   )
-              
+                  
       )
     )
   )
@@ -188,10 +186,13 @@ server <- function(input, output){
     if (input$year != "ALL") {
       clustering_data <- full_data %>% 
         filter(year == input$year) %>% 
-        select(-c(year))
+        mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+        select(state, prescription_rate_std, age_adjusted_rate_std)
     }
     else {
       clustering_data <- clustering_data %>% 
+        mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+        select(state, prescription_rate_std, age_adjusted_rate_std) %>% 
         group_by(state) %>% 
         # If there is no filter, average all the values
         summarise(prescription_rate_std = mean(prescription_rate_std), age_adjusted_rate_std = mean(age_adjusted_rate_std))
@@ -256,7 +257,7 @@ server <- function(input, output){
            fill = "Cluster #") +
       theme(legend.position = "right")
   })
-
+  
 }
 
 # call to shinyApp
