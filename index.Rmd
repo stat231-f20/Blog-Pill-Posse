@@ -608,7 +608,7 @@ We think next steps for our project could include going down to the county level
 # Plot 2014 West Virginia Counties Data
 ggplotly(
   ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
+  geom_polygon(size = .25, aes(text = paste0('County: ', str_to_title(County))))+
   theme_void()  +
   theme(legend.position="right")+
   scale_fill_distiller(palette = "Green", direction = 2)+
