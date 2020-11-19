@@ -56,10 +56,8 @@ west_virginia_data <- readRDS(file = "west_virginia_map_data.rds")
 
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   janitor::clean_names() %>% 
-  filter(year == 2014) %>% 
-  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(state, prescription_rate_std, age_adjusted_rate_std, prescription_rate, age_adjusted_rate)
-  
+  select(state, year, prescription_rate, age_adjusted_rate)
+
 # Initialize map data
 usa_states <- map_data(map = "state", region = ".")
 
@@ -68,40 +66,40 @@ prescription_map <- prescription_data %>%
         filter(year == "2014") %>% 
         inner_join(usa_states, by = c("state" = "region")) %>%
         rename(`Prescription Rate` = prescription_rate)
+
 overdose_map <- overdose_data %>% 
         filter(year == "2014") %>% 
         mutate(State = tolower(State)) %>% 
         inner_join(usa_states, by = c("State" = "region")) %>% 
         rename(`Overdose Rate` = Age.Adjusted.Rate)
-west_virginia_data <- west_virginia_data%>%
+
+west_virginia_data <- west_virginia_data %>%
   filter(Year == 2014)%>%
   rename(`Prescription Rate` = Prescription_Rate)
-
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
 # Plot 2014 Prescription Rate data
 ggplotly(
-      ggplot(prescription_map, aes(x = long, y = lat, group = group, 
-                                       fill = `Prescription Rate`)) +
-        geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Prescription Rate") +
-        theme(legend.position = "bottom") +
-        scale_fill_distiller(palette = "Oranges", direction = 2) + 
-        ggtitle("Opioid Prescription Rates - 2014")
+  ggplot(prescription_map, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
+  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
+  theme_void() +
+  coord_fixed(ratio = 1.3) +
+  labs(fill = "Prescription Rate") +
+  theme(legend.position = "bottom") +
+  scale_fill_distiller(palette = "Oranges", direction = 2) + 
+  ggtitle("Opioid Prescription Rates - 2014")
 )
 
 # Plot 2014 West Virginia Counties Data
 ggplotly(
   ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
-    geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
-    theme_void()  +
-    theme(legend.position="right")+
-    scale_fill_distiller(palette = "Green", direction = 2)+
-    labs(fill = "Prescription Rate")+
-    ggtitle(label = "Prescription Rates in West Virgnia 2014")
+  geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
+  theme_void()  +
+  theme(legend.position="right")+
+  scale_fill_distiller(palette = "Green", direction = 2)+
+  labs(fill = "Prescription Rate")+
+  ggtitle(label = "Prescription Rates in West Virgnia 2014")
 )
 # Plot 2014 Overdose Rate data  
 ggplotly(
@@ -141,33 +139,50 @@ ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
 ```
 
 
-# Clustering (Sean)
+# K-Means Clustering
 
 Text explaining why k-means
+
+wanted to group state based on severity of the problem
 
 ## Determining the Optimal K
 
 While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette coefficient. The silhouette coefficient is calculated using the mean intra-cluster distance and the mean nearest-cluster distance for all samples. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates the mean silhouette coefficient using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
 
 ```{r}
+# Helper function to calculate mean silhouette coefficient
 silhouette_score <- function(k){
   km <- kmeans(full_data[, 2:3], centers = k, nstart = 20)
   score <- cluster::silhouette(km$cluster, dist(full_data[, 2:3]))
   mean(score[, 3])
 }
+```
+
+```{r eval = FALSE}
+# Follow up code to get the maximum silhouette coefficient
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+```
+
+## Clustering for 2014-2018 {.tabset .tabset-fade .tabset-pills}
+
+### 2014
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  janitor::clean_names() %>% 
+  filter(year == 2014) %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(state, prescription_rate_std, age_adjusted_rate_std)
 
 k <- 2:5
 avg_sil <- sapply(k, silhouette_score)
 optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
-optimal_k
 
 km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
 full_data <- mutate(full_data, cluster = as.character(km$cluster))
-```
 
-## Clustering for 2014
-
-```{r echo = FALSE}
 ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
   geom_point(aes(color = cluster)) +
   geom_text_repel(aes(label = state, color = cluster), size = 3) +
@@ -175,8 +190,185 @@ ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_st
              , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
              , pch = "X"
              , size = 3) +
-  labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate", color = "Cluster Assignment") + 
+  labs(x = "Standardized Prescription Rate", y = "Standardized Overdose Rate", 
+       color = "Cluster Assignment") + 
   ggtitle("Clustering for 2014")
+```
+
+```{r echo = FALSE}
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Visualizing the Clusters",
+           fill = "Cluster #") +
+      theme(legend.position="right")
+```
+
+### 2015
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  janitor::clean_names() %>% 
+  filter(year == 2015) %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(state, prescription_rate_std, age_adjusted_rate_std)
+
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
+full_data <- mutate(full_data, cluster = as.character(km$cluster))
+
+ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+  geom_point(aes(color = cluster)) +
+  geom_text_repel(aes(label = state, color = cluster), size = 3) +
+  geom_point(data = as.data.frame(km$centers)
+             , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+             , pch = "X"
+             , size = 3) +
+  labs(x = "Standardized Prescription Rate", y = "Standardized Overdose Rate", 
+       color = "Cluster Assignment") + 
+  ggtitle("Clustering for 2015")
+```
+
+```{r echo = FALSE}
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Visualizing the Clusters",
+           fill = "Cluster #") +
+      theme(legend.position="right")
+```
+
+### 2016
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  janitor::clean_names() %>% 
+  filter(year == 2016) %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(state, prescription_rate_std, age_adjusted_rate_std)
+
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
+full_data <- mutate(full_data, cluster = as.character(km$cluster))
+
+ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+  geom_point(aes(color = cluster)) +
+  geom_text_repel(aes(label = state, color = cluster), size = 3) +
+  geom_point(data = as.data.frame(km$centers)
+             , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+             , pch = "X"
+             , size = 3) +
+  labs(x = "Standardized Prescription Rate", y = "Standardized Overdose Rate", 
+       color = "Cluster Assignment") + 
+  ggtitle("Clustering for 2016")
+```
+
+```{r echo = FALSE}
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Visualizing the Clusters",
+           fill = "Cluster #") +
+      theme(legend.position="right")
+```
+
+### 2017
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  janitor::clean_names() %>% 
+  filter(year == 2017) %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(state, prescription_rate_std, age_adjusted_rate_std)
+
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
+full_data <- mutate(full_data, cluster = as.character(km$cluster))
+
+ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+  geom_point(aes(color = cluster)) +
+  geom_text_repel(aes(label = state, color = cluster), size = 3) +
+  geom_point(data = as.data.frame(km$centers)
+             , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+             , pch = "X"
+             , size = 3) +
+  labs(x = "Standardized Prescription Rate", y = "Standardized Overdose Rate", 
+       color = "Cluster Assignment") + 
+  ggtitle("Clustering for 2017")
+```
+
+```{r echo = FALSE}
+usa_states <- map_data(map = "state", region = ".") %>% 
+  mutate(state = stringr::str_to_title(region))
+
+cluster_map <- full_data %>%
+  inner_join(usa_states, by = "state")
+
+ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
+      geom_polygon(color = "white") +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(title = "Visualizing the Clusters",
+           fill = "Cluster #") +
+      theme(legend.position="right")
+```
+
+### 2018
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
+  janitor::clean_names() %>% 
+  filter(year == 2018) %>% 
+  mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
+  select(state, prescription_rate_std, age_adjusted_rate_std)
+
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
+full_data <- mutate(full_data, cluster = as.character(km$cluster))
+
+ggplot(data = full_data, aes(x = prescription_rate_std, y = age_adjusted_rate_std)) + 
+  geom_point(aes(color = cluster)) +
+  geom_text_repel(aes(label = state, color = cluster), size = 3) +
+  geom_point(data = as.data.frame(km$centers)
+             , aes(x = prescription_rate_std, y = age_adjusted_rate_std)
+             , pch = "X"
+             , size = 3) +
+  labs(x = "Standardized Prescription Rate", y = "Standardized Overdose Rate", 
+       color = "Cluster Assignment") + 
+  ggtitle("Clustering for 2018")
 ```
 
 ```{r echo = FALSE}

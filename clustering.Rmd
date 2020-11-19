@@ -18,13 +18,21 @@ overdose_data <- readRDS("all_overdoses.rds")
 
 full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")) %>% 
   janitor::clean_names() %>% 
-  filter(year == 2014) %>% 
+  filter(year == 2015) %>% 
   mutate_if(is.numeric, funs(`std`=scale(.) %>% as.vector())) %>% 
-  select(-c(year_std))
+  select(state, prescription_rate_std, age_adjusted_rate_std)
 
-factoextra::fviz_nbclust(full_data[, 5:6], kmeans, method = 'silhouette')
+silhouette_score <- function(k){
+  km <- kmeans(full_data[, 2:3], centers = k, nstart = 20)
+  score <- cluster::silhouette(km$cluster, dist(full_data[, 2:3]))
+  mean(score[, 3])
+}
 
-km <- kmeans(full_data[, 5:6], centers = 7, nstart = 20)
+k <- 2:5
+avg_sil <- sapply(k, silhouette_score)
+optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
+
+km <- kmeans(full_data[, 2:3], centers = optimal_k, nstart = 20)
 
 full_data <- mutate(full_data, cluster = as.character(km$cluster))
 
