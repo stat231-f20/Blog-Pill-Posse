@@ -43,8 +43,6 @@ explain what it is
 
 # Prescription Rate vs. Overdose Rate
 
-## Spatial Orientation 
-
 1. Show maps
 2. Ask Questions about whether one causes the other, etc.
 
@@ -67,9 +65,9 @@ west_virginia_data <- west_virginia_data %>%
   rename(`Prescription Rate` = Prescription_Rate)
 ```
 
-# Prescription Rate Maps {.tabset .tabset-fade .tabset-pills}
+## Prescription Rate Maps {.tabset .tabset-fade .tabset-pills}
 
-## 2014
+### 2014
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2014 Data
 prescription_map_2014 <- prescription_data %>% 
@@ -89,7 +87,7 @@ ggplotly(
 )
 ```
 
-## 2015
+### 2015
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2015 Data
 prescription_map_2015 <- prescription_data %>% 
@@ -109,7 +107,7 @@ ggplotly(
 )
 ```
 
-## 2016
+### 2016
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2016 Data
 prescription_map_2016 <- prescription_data %>% 
@@ -129,7 +127,7 @@ ggplotly(
 )
 ```
 
-## 2017
+### 2017
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2017 Data
 prescription_map_2017 <- prescription_data %>% 
@@ -149,7 +147,7 @@ ggplotly(
 )
 ```
 
-## 2018
+### 2018
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2018 Data
 prescription_map_2018 <- prescription_data %>% 
@@ -168,12 +166,12 @@ ggplotly(
   ggtitle("Opioid Prescription Rates - 2018")
 )
 ```
-</div>
+
 With these maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.  
 
-# Overdose Rate Maps {.tabset .tabset-fade .tabset-pills}
+## Overdose Rate Maps {.tabset .tabset-fade .tabset-pills}
 
-## 2014
+### 2014
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2014 Data
 overdose_map_2014 <- overdose_data %>% 
@@ -199,7 +197,7 @@ ggplotly(
 )
 ```
 
-## 2015
+### 2015
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2015 Data
 overdose_map_2015 <- overdose_data %>% 
@@ -225,7 +223,7 @@ ggplotly(
 )
 ```
 
-## 2016
+### 2016
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2016 Data
 overdose_map_2016 <- overdose_data %>% 
@@ -251,7 +249,7 @@ ggplotly(
 )
 ```
 
-## 2017
+### 2017
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2017 Data
 overdose_map_2017 <- overdose_data %>% 
@@ -277,7 +275,7 @@ ggplotly(
 )
 ```
 
-## 2018
+### 2018
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2018 Data
 overdose_map_2018 <- overdose_data %>% 
@@ -302,9 +300,6 @@ ggplotly(
         scale_fill_distiller(palette = "Blues", direction = 2)
 )
 ```
-</div>
-
-
 
 ```{r, echo=FALSE, warning=FALSE}
 # Plot 2014 West Virginia Counties Data
