@@ -61,241 +61,123 @@ The data we used to find the Overdose Rate also came from the [CDC's website](ht
 
 ## Prescription Rate Maps {.tabset .tabset-fade .tabset-pills}
 
+```{r, echo = FALSE, warning = FALSE}
+# Function to output prescription rate map to avoid repeating code
+prescription_map <- function(prescription_data, year_to_change) {
+  
+  # Join prescription data to map data
+  prescription_map <- prescription_data %>% 
+    filter(year == year_to_change) %>% 
+    inner_join(usa_states, by = c("state" = "region")) %>%
+    rename(`Prescription Rate` = prescription_rate)
+  
+  # Plot prescription rate data in a map
+  ggplotly(
+    ggplot(prescription_map, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
+    geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
+    theme_void() +
+    coord_fixed(ratio = 1.3) +
+    labs(fill = "Prescription Rate") +
+    theme(legend.position = "bottom") +
+    scale_fill_distiller(palette = "Oranges", direction = 2) + 
+    ggtitle(paste0("Opioid Prescription Rates in ", year_to_change))
+  )
+}
+```
+
+
 ### 2014
 
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2014 Data
-prescription_map_2014 <- prescription_data %>% 
-        filter(year == 2014) %>% 
-        inner_join(usa_states, by = c("state" = "region")) %>%
-        rename(`Prescription Rate` = prescription_rate)
-# Plot 2014 Prescription Rate data
-ggplotly(
-  ggplot(prescription_map_2014, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-  theme_void() +
-  coord_fixed(ratio = 1.3) +
-  labs(fill = "Prescription Rate") +
-  theme(legend.position = "bottom") +
-  scale_fill_distiller(palette = "Oranges", direction = 2) + 
-  ggtitle("Opioid Prescription Rates - 2014")
-)
+```{r, echo = FALSE, warning = FALSE}
+prescription_map(prescription_data, 2014)
 ```
 
 ### 2015
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2015 Data
-prescription_map_2015 <- prescription_data %>% 
-        filter(year == "2015") %>% 
-        inner_join(usa_states, by = c("state" = "region")) %>%
-        rename(`Prescription Rate` = prescription_rate)
-# Plot 2015 Prescription Rate data
-ggplotly(
-  ggplot(prescription_map_2015, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-  theme_void() +
-  coord_fixed(ratio = 1.3) +
-  labs(fill = "Prescription Rate") +
-  theme(legend.position = "bottom") +
-  scale_fill_distiller(palette = "Oranges", direction = 2) + 
-  ggtitle("Opioid Prescription Rates - 2015")
-)
+
+```{r, echo = FALSE, warning = FALSE}
+prescription_map(prescription_data, 2015)
 ```
 
 ### 2016
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2016 Data
-prescription_map_2016 <- prescription_data %>% 
-        filter(year == "2016") %>% 
-        inner_join(usa_states, by = c("state" = "region")) %>%
-        rename(`Prescription Rate` = prescription_rate)
-# Plot 2016 Prescription Rate data
-ggplotly(
-  ggplot(prescription_map_2016, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-  theme_void() +
-  coord_fixed(ratio = 1.3) +
-  labs(fill = "Prescription Rate") +
-  theme(legend.position = "bottom") +
-  scale_fill_distiller(palette = "Oranges", direction = 2) + 
-  ggtitle("Opioid Prescription Rates - 2016")
-)
+
+```{r, echo = FALSE, warning = FALSE}
+prescription_map(prescription_data, 2016)
 ```
 
 ### 2017
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2017 Data
-prescription_map_2017 <- prescription_data %>% 
-        filter(year == "2017") %>% 
-        inner_join(usa_states, by = c("state" = "region")) %>%
-        rename(`Prescription Rate` = prescription_rate)
-# Plot 2017 Prescription Rate data
-ggplotly(
-  ggplot(prescription_map_2017, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-  theme_void() +
-  coord_fixed(ratio = 1.3) +
-  labs(fill = "Prescription Rate") +
-  theme(legend.position = "bottom") +
-  scale_fill_distiller(palette = "Oranges", direction = 2) + 
-  ggtitle("Opioid Prescription Rates - 2017")
-)
+
+```{r, echo = FALSE, warning = FALSE}
+prescription_map(prescription_data, 2017)
 ```
 
 ### 2018
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2018 Data
-prescription_map_2018 <- prescription_data %>% 
-        filter(year == "2018") %>% 
-        inner_join(usa_states, by = c("state" = "region")) %>%
-        rename(`Prescription Rate` = prescription_rate)
-# Plot 2018 Prescription Rate data
-ggplotly(
-  ggplot(prescription_map_2018, aes(x = long, y = lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(color = "white", aes(text = paste0('State: ', str_to_title(state)))) +
-  theme_void() +
-  coord_fixed(ratio = 1.3) +
-  labs(fill = "Prescription Rate") +
-  theme(legend.position = "bottom") +
-  scale_fill_distiller(palette = "Oranges", direction = 2) + 
-  ggtitle("Opioid Prescription Rates - 2018")
-)
-```
 
+```{r, echo = FALSE, warning = FALSE}
+prescription_map(prescription_data, 2018)
+```
 
 ## Overdose Rate Maps {.tabset .tabset-fade .tabset-pills}
 
+```{r, echo = FALSE, warning = FALSE}
+# Function to output prescription rate map to avoid repeating code
+overdose_map <- function(overdose_data, year_to_change) {
+  
+  # Join overdose rate data to map data
+  overdose_map <- overdose_data %>% 
+    filter(year == year_to_change) %>% 
+    mutate(State = tolower(State)) %>% 
+    inner_join(usa_states, by = c("State" = "region")) %>% 
+    rename(`Overdose Rate` = Age.Adjusted.Rate)
+  
+  # Plot overdose rate data in a map
+  ggplotly(
+    ggplot(overdose_map, aes(x = long, y = lat, group = group, fill = `Overdose Rate`)) +
+      geom_polygon(color = "white", aes(text = paste0('State: ', 
+                                        str_to_title(State), 
+                                        '<br>', 
+                                        'Deaths: ', Deaths))) +
+      theme_void() +
+      coord_fixed(ratio = 1.3) +
+      labs(fill = "Overdose Rate") +
+      theme(legend.position = "bottom") +
+      ggtitle(paste0("Opioid Overdose Rates in ", year_to_change)) + 
+      scale_fill_distiller(palette = "Blues", direction = 2)
+  )
+}
+```
+
 ### 2014
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2014 Data
-overdose_map_2014 <- overdose_data %>% 
-        filter(year == "2014") %>% 
-        mutate(State = tolower(State)) %>% 
-        inner_join(usa_states, by = c("State" = "region")) %>% 
-        rename(`Overdose Rate` = Age.Adjusted.Rate)
-# Plot 2014 Overdose Rate data  
-ggplotly(
-  ggplot(overdose_map_2014, aes(x = long, y = lat, group = group,
-                                   fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", 
-                     aes(text = paste0('State: ', 
-                                      str_to_title(State), 
-                                      '<br>', 
-                                      'Deaths: ', Deaths))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Overdose Rate") +
-        theme(legend.position = "bottom") +
-        ggtitle("Opioid Overdose Rates - 2014") +
-        scale_fill_distiller(palette = "Blues", direction = 2)
-)
+
+```{r, echo = FALSE, warning = FALSE}
+overdose_map(overdose_data, 2014)
 ```
 
 ### 2015
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2015 Data
-overdose_map_2015 <- overdose_data %>% 
-        filter(year == "2015") %>% 
-        mutate(State = tolower(State)) %>% 
-        inner_join(usa_states, by = c("State" = "region")) %>% 
-        rename(`Overdose Rate` = Age.Adjusted.Rate)
-# Plot 2015 Overdose Rate data  
-ggplotly(
-  ggplot(overdose_map_2015, aes(x = long, y = lat, group = group,
-                                   fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", 
-                     aes(text = paste0('State: ', 
-                                      str_to_title(State), 
-                                      '<br>', 
-                                      'Deaths: ', Deaths))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Overdose Rate") +
-        theme(legend.position = "bottom") +
-        ggtitle("Opioid Overdose Rates - 2015") +
-        scale_fill_distiller(palette = "Blues", direction = 2)
-)
+
+```{r, echo = FALSE, warning = FALSE}
+overdose_map(overdose_data, 2015)
 ```
 
 ### 2016
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2016 Data
-overdose_map_2016 <- overdose_data %>% 
-        filter(year == "2016") %>% 
-        mutate(State = tolower(State)) %>% 
-        inner_join(usa_states, by = c("State" = "region")) %>% 
-        rename(`Overdose Rate` = Age.Adjusted.Rate)
-# Plot 2016 Overdose Rate data  
-ggplotly(
-  ggplot(overdose_map_2016, aes(x = long, y = lat, group = group,
-                                   fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", 
-                     aes(text = paste0('State: ', 
-                                      str_to_title(State), 
-                                      '<br>', 
-                                      'Deaths: ', Deaths))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Overdose Rate") +
-        theme(legend.position = "bottom") +
-        ggtitle("Opioid Overdose Rates - 2016") +
-        scale_fill_distiller(palette = "Blues", direction = 2)
-)
+
+```{r, echo = FALSE, warning = FALSE}
+overdose_map(overdose_data, 2016)
 ```
 
 ### 2017
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2017 Data
-overdose_map_2017 <- overdose_data %>% 
-        filter(year == "2017") %>% 
-        mutate(State = tolower(State)) %>% 
-        inner_join(usa_states, by = c("State" = "region")) %>% 
-        rename(`Overdose Rate` = Age.Adjusted.Rate)
-# Plot 2017 Overdose Rate data  
-ggplotly(
-  ggplot(overdose_map_2017, aes(x = long, y = lat, group = group,
-                                   fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", 
-                     aes(text = paste0('State: ', 
-                                      str_to_title(State), 
-                                      '<br>', 
-                                      'Deaths: ', Deaths))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Overdose Rate") +
-        theme(legend.position = "bottom") +
-        ggtitle("Opioid Overdose Rates - 2017") +
-        scale_fill_distiller(palette = "Blues", direction = 2)
-)
+
+```{r, echo = FALSE, warning = FALSE}
+overdose_map(overdose_data, 2017)
 ```
 
 ### 2018
-```{r, echo=FALSE, warning=FALSE}
-# Grabbing 2018 Data
-overdose_map_2018 <- overdose_data %>% 
-        filter(year == "2018") %>% 
-        mutate(State = tolower(State)) %>% 
-        inner_join(usa_states, by = c("State" = "region")) %>% 
-        rename(`Overdose Rate` = Age.Adjusted.Rate)
-# Plot 2018 Overdose Rate data  
-ggplotly(
-  ggplot(overdose_map_2018, aes(x = long, y = lat, group = group,
-                                   fill = `Overdose Rate`)) +
-        geom_polygon(color = "white", 
-                     aes(text = paste0('State: ', 
-                                      str_to_title(State), 
-                                      '<br>', 
-                                      'Deaths: ', Deaths))) +
-        theme_void() +
-        coord_fixed(ratio = 1.3) +
-        labs(fill = "Overdose Rate") +
-        theme(legend.position = "bottom") +
-        ggtitle("Opioid Overdose Rates - 2018") +
-        scale_fill_distiller(palette = "Blues", direction = 2)
-)
+
+```{r, echo = FALSE, warning = FALSE}
+overdose_map(overdose_data, 2018)
 ```
 
 ## Analysis
+
 In the first maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons in 2014. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.
 
 The next graphs are the Overdose rates per state from 2014 to 2018. Here we can see that overdoses have been substantially increasing each year since 2014. What's interesting here is that many states with high prescription rates also have very high overdose rates which alludes to the possibility that prescription rate may contribute to the overdose rate in a state. West Virginia is known for having the worst opioid problem in the United States and the overdose rate here increases from 35.5 to 51.5 over the five year span. The opioid crisis is getting worse every year however, if states continue to keep lowering their prescription rates perhaps this can help to solve the problem. 
@@ -358,10 +240,11 @@ optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
 ## Clustering for 2014-2018 {.tabset .tabset-fade .tabset-pills}
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-# Make a function to output clustering graphs to avoid repeating code
+# Function to output clustering graphs to avoid repeating code
 
 clustering_graphs <- function(full_data, year_to_change) {
   
+  # Ensure states are in the same cluster
   set.seed(1106)
   full_data <- full_data %>% 
     filter(year == year_to_change) %>% 
@@ -442,7 +325,6 @@ clustering_graphs(full_data, 2018)[[1]]
 clustering_graphs(full_data, 2018)[[2]]
 ```
 
-
 ## Analysis
 
 In the clustering graph, states in the top right quadrant are classified as high risk for an opioid crisis. In these states, individuals are prescribed opioid/narcotic prescriptions at a higher rate and are also overdosing at greater proportions. Conversely, states in the bottom left quadrant are classified as low risk as they have low prescription and overdose rates. Geographically, southern states (i.e. Alabama, Louisiana, Tennessee, Mississippi, etc.) tend to cluster together. The same trend was evident in midwestern states (North and South Dakota, Minnesota, Nebraska, etc.). This suggests that states with geographic commonalities also share similar risks of opioid crises. These states that are identified as high risk can also be targeted for public policies, as physicians should be urged to prescribe opioids much more conservatively.
@@ -471,18 +353,19 @@ It is interesting to note that the general pattern of high risk states located i
 
 3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored? 
 
-Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availiblity, poverty, access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
+Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availiblity, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
 
 ## Next Steps
+
 We think next steps for our project could include going down to the county level and further exploring the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. For example, identifying which counties are mostly affected by the epidemic could help the state in providing funds and aid to the counties in need. Here’s a look into what a map of prescription rates in West Virginia would look like if we continued with our next steps.
 
-```{r, echo=FALSE, warning=FALSE}
-# Plot 2014 West Virginia Counties Data
+```{r, echo = FALSE, warning = FALSE}
+# Plot 2014 West Virginia county data
 ggplotly(
   ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(size = .25, aes(text = paste0('County: ', str_to_title(County))))+
-  theme_void()  +
-  theme(legend.position="right")+
+  geom_polygon(size = .25, aes(text = paste0('County: ', str_to_title(County)))) +
+  theme_void() +
+  theme(legend.position="right") +
   scale_fill_distiller(palette = "Green", direction = 2)+
   labs(fill = "Prescription Rate")+
   ggtitle(label = "Prescription Rates in West Virgnia 2014")
