@@ -18,13 +18,13 @@ library(mosaic)
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 ```
 
-# Introduction (Tamer)
+# Introduction
 
 The Opioid Crisis is truly that - a crisis. Over the past 20 years, opioids have become a commonly used recreational drug. As people use these drugs, they become addicted. Opioid abuse often starts with a legitimate prescription as a treatment for pain. However, the addictive nature of the drug can cause people to seek out more opioids after their prescription is over. In small doses, opioids are effective painkillers that may make you feel drowsy. In large doses (abuse), opioids can result in slowed breathing and a slowed heart-rate. These effects can cause death - otherwise known as an overdose. 
 
 The amount of opioids prescribed began growing a lot in 2006 and peaked in 2012 with 255 million doses prescribed. Since 2012, overall doses prescribed has diminished to 168 million in 2018; however, that is still a huge number of opioid doses. Unfortunately, overdoses have also been on the rise and - unlike prescriptions - are continuing to rise (as can be seen in the figure below).
 
-![image](images/Opioid-deaths-timeline.png)
+![Image from the CDC - https://www.cdc.gov/nchs/data/databriefs/db356-h.pdf](images/Opioid-deaths-timeline.png)
 
 The mechanism by which legitimate prescriptions may lead someone down the path to opioid abuse and potentially overdosing is one of addiction. When someone is legally prescribed opioids (potentially an excessive number of doses) they are subject to developing an addiction. If they do, then they may go searching for more opioids after their prescription runs out. The most common replacements are drugs like heroin and fentanyl. Heroin and fentanyl, which is over 100 times the strength of morphine - a notoriously powerful painkiller, are very strong opioids that can very easily lead to overdose even after just one use. It is also worth noting that even prescription opioids cause deaths, not just the super strong types. 
 
@@ -34,16 +34,16 @@ For this project, we wanted to explore the relationship between opioid prescript
 
 ## Prescription Rate Data 
 
-Talk about data here
+The data we used to determine the prescription rate for each state comes from the [CDC's website](https://www.cdc.gov/drugoverdose/maps/rxrate-maps.html#:~:text=The%20overall%20national%20opioid%20prescribing%20rate%20declined%20from%202012%20to,168%20million%20total%20opioid%20prescriptions). It includes data for each state - and summary data for the entire US - for overall opioid prescription doses and opioid prescription rate (per 100 persons) for the years 2006 - 2018. Although the data contained 12 years worth of prescribing information, we only used 2014 - 2018 because of the availability of matching overdose data. 
 
-## Overdose Rate Data (Chris)
+## Overdose Rate Data 
 
 Where data is from 
 explain what it is
 
-# Analysis
+# Prescription Rate vs. Overdose Rate
 
-## Prescription Rate vs. Overdose Rate (Chris)
+## Spatial Orientation 
 
 1. Show maps
 2. Ask Questions about whether one causes the other, etc.
@@ -123,21 +123,30 @@ ggplotly(
 
 ## Regression
 
-```{r warning = FALSE}
+A very simple statistical analysis of whether or not two variables are correlated is to run a bivariate, linear regression that predicts how a 1 unit increase in the prescription rate of a state affects the overdose rate in that state. After running the model, we found that there is a statistically significant relationship between the two variables (p-value < .05). The actual linear relationship suggests that a 1 unit increase in the prescription rate will result in a .10475 unit increase in the overdose rate. Although this model is not perfect (we have almost certainly left out contributing variables that leads to some bias), the statistically significant, positive relationship between the prescription rate and the overdose rate at least show that the overdose rate is likely to go up with a greater prescription rate.
+
+```{r, warning = FALSE, echo = FALSE}
 # scatter / regression between prescription rate and overdose rate
 mod <- lm(age_adjusted_rate ~ prescription_rate, data = full_data)
 msummary(mod)
 ```
 
-```{r}
-ggplot(data = full_data, aes(x = prescription_rate)) +
-  geom_histogram(bins = 15)
-```
-
-```{r}
+```{r, echo = FALSE, warning = FALSE}
+ggplotly(
 ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
-  geom_point() + 
-  geom_abline(intercept = 7.56323, slope = 0.10475)
+  geom_point(aes(color = age_adjusted_rate,
+                 text = paste0('<b>State</b>: ', str_to_title(state),
+                              '<br>', 
+                              '<b>Prescription Rate</b>: ', prescription_rate,
+                              '<br>', 
+                              '<b>Overdose Rate</b>: ', age_adjusted_rate))) +
+  geom_abline(intercept = 7.56323, slope = 0.10475) +
+  theme(legend.position="none") +
+  labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate") + 
+  ggtitle("Relationship between Prescription Rate and Overdose Rate"),
+tooltip = "text"
+)
+
 ```
 
 
