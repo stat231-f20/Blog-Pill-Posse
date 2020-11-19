@@ -38,13 +38,9 @@ The data we used to determine the prescription rate for each state comes from th
 
 ## Overdose Rate Data 
 
-Where data is from 
-explain what it is
+The data we used to find the Overdose Rate also came from the CDS website linked [here](https://www.cdc.gov/drugoverdose/data/statedeaths.html). It includes overdose data from each state with columns that include, State name, death rate range, the age adjusted overdose rate and total number of overdose deaths. We used the age adjusted overdose rate as our fill category in the maps below and it can be defined as: a death rate that controls for the effects of differences in population age distributions. 
 
 # Prescription Rate vs. Overdose Rate
-
-1. Show maps
-2. Ask Questions about whether one causes the other, etc.
 
 
 ```{r, include = FALSE, warning = FALSE}
@@ -167,7 +163,6 @@ ggplotly(
 )
 ```
 
-With these maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.  
 
 ## Overdose Rate Maps {.tabset .tabset-fade .tabset-pills}
 
@@ -301,18 +296,8 @@ ggplotly(
 )
 ```
 
-```{r, echo=FALSE, warning=FALSE}
-# Plot 2014 West Virginia Counties Data
-ggplotly(
-  ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
-  geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
-  theme_void()  +
-  theme(legend.position="right")+
-  scale_fill_distiller(palette = "Green", direction = 2)+
-  labs(fill = "Prescription Rate")+
-  ggtitle(label = "Prescription Rates in West Virgnia 2014")
-)
-```      
+## Analysis
+With these maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.
 
 # Regression
 
@@ -593,4 +578,26 @@ ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
 
 text about the clustering
 
-# Conclusion (Chris, Sean)
+# Conclusion
+
+## Answering Questions
+1. How do prescription rates affect overdose rates in every state?
+  
+2. Which States seem to have been most impacted by opiate prescriptions?
+3. What other factors could potentially be contribute to high overdose rates other than prescription rates that we haven’t explored?
+
+## Next Steps
+We think next steps for our project could include going down to the county level and analyzing  the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. Here’s a look into what a map of West Virginia would look like if we continued with our next steps.
+
+```{r, echo=FALSE, warning=FALSE}
+# Plot 2014 West Virginia Counties Data
+ggplotly(
+  ggplot(west_virginia_data, mapping = aes(long, lat, group = group, fill = `Prescription Rate`)) +
+  geom_polygon(size = .25, aes(text = paste0('<b>County</b>: ', str_to_title(County))))+
+  theme_void()  +
+  theme(legend.position="right")+
+  scale_fill_distiller(palette = "Green", direction = 2)+
+  labs(fill = "Prescription Rate")+
+  ggtitle(label = "Prescription Rates in West Virgnia 2014")
+)
+```
