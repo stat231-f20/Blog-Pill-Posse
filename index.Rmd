@@ -42,7 +42,6 @@ The data we used to find the Overdose Rate also came from the CDS website linked
 
 # Prescription Rate vs. Overdose Rate
 
-
 ```{r, include = FALSE, warning = FALSE}
 # Read in data
 prescription_data <- readRDS(file = "prescription_data.rds")
@@ -67,7 +66,7 @@ west_virginia_data <- west_virginia_data %>%
 ```{r, echo=FALSE, warning=FALSE}
 # Grabbing 2014 Data
 prescription_map_2014 <- prescription_data %>% 
-        filter(year == "2014") %>% 
+        filter(year == 2014) %>% 
         inner_join(usa_states, by = c("state" = "region")) %>%
         rename(`Prescription Rate` = prescription_rate)
 # Plot 2014 Prescription Rate data
@@ -336,7 +335,7 @@ Clustering is a machine learning method used to group together observations with
 
 ## Determining the Optimal K
 
-While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette coefficient. The silhouette coefficient is calculated using the mean intra-cluster distance and the mean nearest-cluster distance for all samples. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates the mean silhouette coefficient using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
+While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette score. The silhouette coefficient is a measure of how similar an observation is to its own cluster compared to other clusters. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates mean silhouette score using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
 
 ```{r}
 # Helper function to calculate mean silhouette coefficient
