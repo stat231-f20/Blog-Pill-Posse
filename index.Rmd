@@ -583,9 +583,10 @@ In the clustering graph, states in the top right quadrant are classified as high
 # Conclusion
 
 ## Answering Questions
+
 1. How do prescription rates affect overdose rates in every state?
 
-Looking at each year individually, it's clear that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with the linear regression model, it's fair to say that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rate. If you take a look at the beginning of the the opioid epidemic in the US, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand leading to a tremendous amount of opioid addicted US citizens. 
+Looking at each year individually, it's clear that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with the linear regression model, it's fair to say that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rate. If you take a look at the beginning of the the opioid epidemic, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand and led to hundreds of thousands of Americans becoming addicted to opiates. When the FDA finally decided to more heavily regulate opioid prescriptions, the cat was already out of the bag and we now have an epidemic on our hands.
 
 2. Which states seem to have been most impacted by the opioid crisis?
 
