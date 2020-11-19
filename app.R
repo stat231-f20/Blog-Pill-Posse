@@ -65,7 +65,7 @@ ui <- fluidPage(
                   label = "Choose a Year:",
                   choices = c(
                     "ALL",
-                    unique(as.character(str_sort(prescription_map$year)))
+                    unique(as.character(str_sort(full_data$year)))
                   )
       ),
       img(src = "https://www.clipartkey.com/mpngs/m/290-2909884_opioid-icons2x-opioid-symbol.png", width = "100%")

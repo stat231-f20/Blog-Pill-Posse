@@ -580,6 +580,10 @@ ggplot(cluster_map, aes(x = long, y = lat, group = group, fill = cluster)) +
 
 In the clustering graph, states in the top right quadrant are classified as high risk for an opioid crisis. In these states, individuals are prescribed opioid/narcotic prescriptions at a higher rate and are also overdosing at greater proportions. Conversely, states in the bottom left quadrant are classified as low risk as they have low prescription and overdose rates. Geographically, southern states (i.e. Alabama, Louisiana, Tennessee, Mississippi, etc.) tend to cluster together. The same trend was evident in midwestern states (North and South Dakota, Minnesota, Nebraska, etc.). This suggests that states with geographic commonalities also share similar risks of opioid crises.
 
+# Shiny App
+
+To interact with these plots further, visit: https://swei1999.shinyapps.io/Blog-Pill-Posse/.
+
 # Conclusion
 
 ## Answering Questions
