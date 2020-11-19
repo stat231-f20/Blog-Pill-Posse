@@ -305,7 +305,7 @@ The next graphs are the Overdose rates per state from 2014 to 2018. Here we can 
 
 A very simple statistical analysis of whether or not two variables are correlated is to run a linear regression that predicts how a 1 unit increase in the prescription rate of a state affects the overdose rate in that state. We chose to run the regression on 2014 data specifically because it was the worst in terms of overdoses in our data. After running the model, we found that there is a statistically significant relationship between the two variables (p-value < .05). The actual linear relationship suggests that a 1 unit increase in the prescription rate will result in a .10475 unit increase in the overdose rate. Although this model is not perfect (we have almost certainly left out contributing variables that leads to some bias), the statistically significant, positive relationship between the prescription rate and the overdose rate at least show that the overdose rate is likely to go up with a greater prescription rate.
 
-```{r, warning = FALSE, echo = FALSE}
+```{r, warning = FALSE, echo = FALSE, comment = NA}
 data_2014 <- filter(full_data, year == 2014)
 mod <- lm(age_adjusted_rate ~ prescription_rate, data = data_2014)
 msummary(mod)
@@ -313,7 +313,7 @@ msummary(mod)
 
 ```{r, echo = FALSE, warning = FALSE}
 ggplotly(
-ggplot(data = full_data, aes(x = prescription_rate, y = age_adjusted_rate)) +
+ggplot(data = data_2014, aes(x = prescription_rate, y = age_adjusted_rate)) +
   geom_point(aes(color = age_adjusted_rate,
                  text = paste0('<b>State</b>: ', str_to_title(state),
                               '<br>', 
