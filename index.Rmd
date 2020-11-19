@@ -147,7 +147,7 @@ Text explaining why k-means
 
 ## Determining the Optimal K
 
-Explain silhouette score
+While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette coefficient. The silhouette coefficient is calculated using the mean intra-cluster distance and the mean nearest-cluster distance for all samples. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates the mean silhouette coefficient using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
 
 ```{r}
 silhouette_score <- function(k){
