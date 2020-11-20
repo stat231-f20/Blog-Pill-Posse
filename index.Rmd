@@ -190,9 +190,13 @@ A very simple statistical analysis of whether or not two variables are correlate
 data_2014 <- filter(full_data, year == 2014)
 mod <- lm(age_adjusted_rate ~ prescription_rate, data = data_2014)
 msummary(mod)
+cor.test(data_2014$age_adjusted_rate, data_2014$prescription_rate)
 ```
 
+One example of a statistical analysis to determine whether or not two variables are correlated is the Pearson's correlation test. We chose to run this test on 2014 data specifically because it was the worst in terms of overdoses in our data. The conditions for this test seem satisfied because there is a linear relationship present between the variables and both variables mostly follow a normal distribution (there is some deviation from the QQ line, but the consequences of assumed normality are not detrimental here because we are not using this test to predict). The p-value of this test is less than the standard $\alpha$ = 0.05, so we can conclude that prescription rate and age adjusted overdose rate are significantly correlated with a correlation coefficient of 0.394.
+
 ```{r, echo = FALSE, warning = FALSE}
+# Checking linearity
 ggplotly(
 ggplot(data = data_2014, aes(x = prescription_rate, y = age_adjusted_rate)) +
   geom_point(aes(color = age_adjusted_rate,
@@ -207,9 +211,20 @@ ggplot(data = data_2014, aes(x = prescription_rate, y = age_adjusted_rate)) +
   ggtitle("Relationship between Prescription Rate and Overdose Rate"),
 tooltip = "text"
 )
-
 ```
 
+```{r echo = FALSE}
+# Checking normality
+library(ggpubr)
+ggqqplot(data_2014$age_adjusted_rate, ylab = "Overdose Rate")
+ggqqplot(data_2014$prescription_rate, ylab = "Prescription Rate")
+```
+
+```{r warning = FALSE, echo = FALSE}
+# Running Pearson's correlation test
+data_2014 <- filter(full_data, year == 2014)
+cor.test(data_2014$age_adjusted_rate, data_2014$prescription_rate)
+```
 
 # K-Means Clustering
 
