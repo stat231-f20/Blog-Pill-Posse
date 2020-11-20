@@ -51,11 +51,11 @@ usa_states <- map_data(map = "state", region = ".")
 
 ## Prescription Rate Data 
 
-The data we used to determine the prescription rate for each state comes from the [CDC's website](https://www.cdc.gov/drugoverdose/maps/rxrate-maps.html#:~:text=The%20overall%20national%20opioid%20prescribing%20rate%20declined%20from%202012%20to,168%20million%20total%20opioid%20prescriptions). It includes data for each state - and summary data for the entire US - for overall opioid prescription doses and opioid prescription rate (per 100 persons) for the years 2006 - 2018. Although the data contained 12 years worth of prescribing information, we only used 2014 - 2018 because of the availability of matching overdose data. 
+The data we used to determine the prescription rate for each state comes from the [CDC's website](https://www.cdc.gov/drugoverdose/maps/rxrate-maps.html#:~:text=The%20overall%20national%20opioid%20prescribing%20rate%20declined%20from%202012%20to,168%20million%20total%20opioid%20prescriptions). It includes state-wide data for opioid prescription rates, which is defined as MME (Morphine Milligram Equivalents) prescribed per 100 people. Although the data contained 12 years worth of prescribing information (2006 - 2018), we only used data for 2014 - 2018 because of the availability of matching overdose data. 
 
 ## Overdose Rate Data 
 
-The data we used to find the Overdose Rate also came from the [CDC's website](https://www.cdc.gov/drugoverdose/data/statedeaths.html). It includes overdose data from each state with columns that include, state name, death rate range, age adjusted overdose rate, and total number of overdose deaths. Age adjusted rate can be define as the death rate that controls for the effects of differences in population age distributions. 
+The data we used to find the overdose rates also came from the [CDC's website](https://www.cdc.gov/drugoverdose/data/statedeaths.html). It includes state-wide overdose data on death rate range, age adjusted overdose rate, and total number of overdose deaths. Age adjusted rate is defined as the death rate that controls for the effects of differences in population age distributions. 
 
 # Prescription Rate vs. Overdose Rate
 
@@ -119,7 +119,7 @@ prescription_map(prescription_data, 2018)
 ## Overdose Rate Maps {.tabset .tabset-fade .tabset-pills}
 
 ```{r, echo = FALSE, warning = FALSE}
-# Function to output prescription rate map to avoid repeating code
+# Function to output overdose rate map to avoid repeating code
 overdose_map <- function(overdose_data, year_to_change) {
   
   # Join overdose rate data to map data
@@ -178,9 +178,9 @@ overdose_map(overdose_data, 2018)
 
 ## Analysis
 
-In the first maps we can see how the prescription rate for opioids has changed from 2014 to 2018. It's clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia with prescription rates of 126 and 135 respectively per one hundred persons in 2014. These two states are on the higher end of the prescription rates in the US and later we can look into how this could play a roll in the overdose rates in both these states.
+In the first set of maps, we can see how the prescription rates for opioids have changed from 2014 to 2018. It is clear that policies instituted by the FDA in the late 2000s have come into effect, where nearly every state has lowered their prescription rate for opiates each year. Some interesting states to highlight include Alabama and West Virginia, with prescription rates of 126 and 135 respectively per one hundred persons in 2014. These two states are on the higher end of the prescription rates in the U.S. Later in the project, we look into how this could play a roll in the overdose rates in both these states.
 
-The next graphs are the Overdose rates per state from 2014 to 2018. Here we can see that overdoses have been substantially increasing each year since 2014. What's interesting here is that many states with high prescription rates also have very high overdose rates which alludes to the possibility that prescription rate may contribute to the overdose rate in a state. West Virginia is known for having the worst opioid problem in the United States and the overdose rate here increases from 35.5 to 51.5 over the five year span. The opioid crisis is getting worse every year however, if states continue to keep lowering their prescription rates perhaps this can help to solve the problem. 
+The next set of maps are the overdose rates per state from 2014 to 2018. We can see that overdoses have been substantially increasing each year since 2014. It is interesting to note that many states with high prescription rates also have very high overdose rates, which alludes to the possibility that prescription rates may contribute to the overdose rate in a state. West Virginia is known for having the worst opioid problem in the United States, and the overdose rate here increases from 35.5 to 51.5 over the five year span. The opioid crisis is getting worse every year; however, if states continue to keep lowering their prescription rates perhaps this can help to solve the problem. 
 
 # Pearson's Correlation Test
 
@@ -220,11 +220,11 @@ One example of a statistical analysis to determine whether or not two variables 
 
 # K-Means Clustering
 
-Clustering is a machine learning method used to group together observations with similar characteristics. In this scenario, we are grouping together U.S. states by their respective prescription rates and overdose rates (age adjusted). These variables were selected because they take into account the discrepancies in population size, which allows for comparisons between less densely-populated states like Vermont to more populated states such as New York. Through this clustering analysis, we can classify states that are disproportionately affected by the opioid epidemic.
+Clustering is a machine learning method used to group together observations with similar characteristics. In this scenario, we are grouping together U.S. states by their respective prescription rates and age adjusted overdose rates. These variables were selected because they take into account the discrepancies in population size, which allows for comparisons between less densely-populated states like Vermont to more populated states such as New York. Through this clustering analysis, we can attempt to classify states that are disproportionately affected by the opioid epidemic.
 
 ## Determining the Optimal K
 
-While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette score. The silhouette coefficient is a measure of how similar an observation is to its own cluster compared to other clusters. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates mean silhouette score using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value. It is impo
+While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette score. The silhouette coefficient is a measure of how similar an observation is to its own cluster compared to other clusters. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates the mean silhouette score using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
 
 ```{r}
 # Helper function to calculate mean silhouette coefficient
@@ -336,12 +336,12 @@ clustering_graphs(full_data, 2018)[[2]]
 
 ## Analysis
 
-In the clustering graph, states in the top right quadrant are classified as high risk for an opioid crisis. In these states, individuals are prescribed opioid/narcotic prescriptions at a higher rate and are also overdosing at greater proportions. Conversely, states in the bottom left quadrant are classified as low risk as they have low prescription and overdose rates. Geographically, southern states (i.e. Alabama, Louisiana, Tennessee, Mississippi, etc.) tend to cluster together. The same trend was evident in midwestern states (North and South Dakota, Minnesota, Nebraska, etc.). This suggests that states with geographic commonalities also share similar risks of opioid crises. These states that are identified as high risk can also be targeted for public policies, as physicians should be urged to prescribe opioids much more conservatively.
+In the clustering graph, states in the top right quadrant can be classified as high risk for an opioid crisis. In these states, individuals are prescribed opioid/narcotic prescriptions at a higher rate and are also overdosing at greater proportions. Conversely, states in the bottom left quadrant are classified as low risk as they have low prescription and overdose rates. Geographically, southern states (i.e. Alabama, Louisiana, Tennessee, Mississippi, etc.) tend to cluster together. The same trend was evident in midwestern states (North and South Dakota, Minnesota, Nebraska, etc.). This suggests that states with geographic commonalities can also share similar risks of opioid crises. These states that are identified as high risk can also be targeted for public policies, as physicians should be urged to prescribe stronger opioids much more conservatively.
 
 
 # Shiny App
 
-To interact with these plots further, visit: https://swei1999.shinyapps.io/Blog-Pill-Posse/.
+To interact with the plots above further, visit: https://swei1999.shinyapps.io/Blog-Pill-Posse/.
 
 # Conclusion
 
@@ -349,28 +349,28 @@ To interact with these plots further, visit: https://swei1999.shinyapps.io/Blog-
 
 **1. How do prescription rates affect overdose rates in every state?**
 
-Looking at each year individually, it's clear that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with the linear regression model, it's fair to say that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rate. If you take a look at the beginning of the the opioid epidemic, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand and led to hundreds of thousands of Americans becoming addicted to opiates. When the FDA finally decided to more heavily regulate opioid prescriptions, the cat was already out of the bag and we now have an epidemic on our hands.
+Looking at each year individually, it is evident that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with Pearson's correlation test, it could be said that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rates. If you take a look at the beginning of the the opioid epidemic, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand and led to hundreds of thousands of Americans becoming addicted to opiates. When the FDA finally decided to heavily regulate opioid prescriptions, the opioid epidemic was already spiraling out of control.
 
 **2. Which states seem to have been most impacted by the opioid crisis?**
 
-Throughout 2014-2018, the states most strongly impacted by the opioid epidemic are primarily located across the east and south-eastern United States. In particular, southern states are consistently grouped together as high risk (with high rates of prescriptions and overdoses). Notably, West Virginia was constantly among the highest risk states.
+Throughout 2014 - 2018, the states most strongly impacted by the opioid epidemic are primarily located across the east and south-eastern United States. In particular, southern states are consistently grouped together as high risk (with high rates of prescriptions and overdoses). Notably, West Virginia was constantly among the highest risk states.
 
-It is interesting to note that the general pattern of high risk states located in the east and south east US reflects numerous current public health trends. More specifically, the distribution of several cardiovascular diseases follows almost the same distribution as seen here. For example, the “Stroke Belt,” (pictured below) was recognized by public health officials as presenting notably high incidence of stroke. While the graphic  displays data from the 2000s, this same trend has been documented repeatedly over the past two decades. This sweeping pattern of poor health across the east-to-south-east US has also been reported in other conditions, such as obesity. This general trend **suggests** that perhaps the same factors that are instrumental to the poor health of these states are also contributing to their classification as high risk for an opioid crisis.
+It is interesting to note that the general pattern of high risk states located in the east and south east U.S. reflects numerous current public health trends. More specifically, the distribution of several cardiovascular diseases follows almost the same distribution as seen here. For example, the “Stroke Belt,” (pictured below) was recognized by public health officials as presenting notably high incidence of stroke. While the graphic  displays data from the 2000s, this same trend has been documented repeatedly over the past two decades. This sweeping pattern of poor health across the east-to-south-east U.S. has also been reported in other conditions, such as obesity. While no conclusive inferences can be drawn from this, this general trend could suggest that perhaps the same factors that are instrumental to the poor health of these states are also contributing to their classification as high risk for an opioid crisis.
 
 ![Image of stroke belt - https://www.cdc.gov/stroke/maps_data.htm](images/stroke_map.jpg)
 
 
 **3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored?**
 
-Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availability, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
+Prescription rates are not the only factor contributing to overdose rates throughout the United States. Other factors such as naloxone availability, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the U.S. 
 
 ## Limitations
 
-Although we were able to access national opioid data from the CDC that suited our needs, the data was not the most detailed. We struggled to come across any national opioid data that had numerous variables for us to explore. IQVIA, a health information-based data science company, is one of the sole providers of detailed prescription data in the US. Unfortunately for us, datasets that come from companies like IQVIA datasets cost money and are perhaps too large for our computers to handle.
+Although we were able to access national opioid data from the CDC that suited our needs, the data was not the most detailed. We struggled to come across any national opioid data that had numerous variables for us to explore. IQVIA, a health information-based data science company, is one of the sole providers of detailed prescription data in the U.S. Unfortunately for us, datasets that come from companies like IQVIA cost money and are perhaps too large for our computers to handle.
 
 ## Possible Next Steps
 
-We think next steps for our project could include going down to the county level and further exploring the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. For example, identifying which counties are mostly affected by the epidemic could help the state in providing funds and aid to the counties in need. Here’s a look into what a map of prescription rates in West Virginia would look like if we continued with our next steps.
+We believe next steps for our project could include going down to the county level and further exploring the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. For example, identifying which counties are mostly affected by the epidemic could help the state in providing funds and aid to the counties in need. Below is a look into what a map of prescription rates in West Virginia would look like if we continued with our next steps.
 
 ```{r, echo = FALSE, warning = FALSE}
 # Plot 2014 West Virginia county data
