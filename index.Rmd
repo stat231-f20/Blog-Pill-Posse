@@ -1,7 +1,7 @@
 ---
 title: "The Opioid Epidemic"
 author: "Chris Murphy, Tamer Sullivan, and Sean Wei"
-date: "11/19/2020"
+date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
     css: "blogcss.css"
@@ -20,15 +20,15 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 
 # Introduction
 
-The Opioid Crisis is truly that - a crisis. Over the past 20 years, opioids have become a commonly used recreational drug. As people use these drugs, they become addicted. Opioid abuse often starts with a legitimate prescription as a treatment for pain. However, the addictive nature of the drug can cause people to seek out more opioids after their prescription is over. In small doses, opioids are effective painkillers that may make you feel drowsy. In large doses (abuse), opioids can result in slowed breathing and a slowed heart-rate. These effects can cause death - otherwise known as an overdose. 
+The Opioid Crisis is truly that - a crisis. Over the past 20 years, opioids have become a commonly used recreational drug. As people use these drugs, they become addicted. Opioid abuse often starts with a legitimate prescription as a treatment for pain. In small doses, opioids are effective painkillers that may make you feel drowsy. However, the addictive nature of the drug can cause people to seek out more opioids after their prescription is over. In large doses, also known as abuse, opioids can result in slowed breathing and a slowed heart-rate. These effects can cause death - otherwise known as an overdose. 
 
-The amount of opioids prescribed began growing a lot in 2006 and peaked in 2012 with 255 million doses prescribed. Since 2012, overall doses prescribed has diminished to 168 million in 2018; however, that is still a huge number of opioid doses. Unfortunately, overdoses have also been on the rise and - unlike prescriptions - are continuing to rise, as can be seen in the figure below.
+The amount of opioids prescribed began growing in 2006 and peaked in 2012 with 255 million doses prescribed. Since 2012, overall doses prescribed has diminished to 168 million in 2018; however, that is still a huge number of opioid doses. Unfortunately, overdoses have also been on the rise and - unlike prescriptions - are continuing to rise, as can be seen in the figure below.
 
-![Image from the CDC - https://www.cdc.gov/nchs/data/databriefs/db356-h.pdf](images/Opioid-deaths-timeline.png)
+![A graphic from the CDC that illustrates how overdoses are still on the rise despite precription rates decreasing (image from https://www.cdc.gov/nchs/data/databriefs/db356-h.pdf)](images/Opioid-deaths-timeline.png)
 
-The mechanism by which legitimate prescriptions may lead someone down the path to opioid abuse and potentially overdosing is one of addiction. When someone is legally prescribed opioids (potentially an excessive number of doses) they are subject to developing an addiction. If they do, then they may go searching for more opioids after their prescription runs out. The most common replacements are drugs like heroin and fentanyl. Heroin and fentanyl, which is over 100 times the strength of morphine - a notoriously powerful painkiller, are very strong opioids that can very easily lead to overdose even after just one use. It is also worth noting that even prescription opioids cause deaths, not just the super strong types. 
+The mechanism by which legitimate prescriptions may lead to opioid abuse and potential overdose is addiction. When someone is legally prescribed opioids (potentially an excessive number of doses) they are subject to developing an addiction. If they do, then they may go searching for more opioids after their prescription runs out. The most common replacements are drugs like heroin and fentanyl, which are over 100 times the strength of morphine - a notoriously powerful painkiller. These powerful opioids can easily lead to overdose even after just one use. It is also worth noting that even ordinary prescription opioids cause deaths, not just the super strong types. 
 
-For this project, we wanted to explore the relationship between opioid prescription rate and overdose rate and figure out which (if there are any) states that are disproportionately affected. 
+For this project, we wanted to explore the relationship between opioid prescription rate and overdose rate and figure out which (if any) states are disproportionately affected by the opioid epidemic. 
 
 # Data
 
