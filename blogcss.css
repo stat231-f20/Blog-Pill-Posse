@@ -35,3 +35,7 @@ h2 {
 #table-of-contents .nav .active ul li a {
   color: black !important;
 }
+
+#content pre {
+  margin-top: 24px;
+}

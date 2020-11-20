@@ -211,7 +211,7 @@ ggpubr::ggqqplot(data_2014$age_adjusted_rate, ylab = "Overdose Rate")
 ggpubr::ggqqplot(data_2014$prescription_rate, ylab = "Prescription Rate")
 ```
 
-```{r warning = FALSE, echo = FALSE}
+```{r warning = FALSE, echo = FALSE, class.source = "margin"}
 # Running Pearson's correlation test
 cor.test(data_2014$age_adjusted_rate, data_2014$prescription_rate)
 ```
