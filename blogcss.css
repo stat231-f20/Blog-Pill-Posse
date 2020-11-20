@@ -1,0 +1,37 @@
+a {
+  color: white;
+}
+
+.title {
+  font-size: 500% !important;
+  text-align: center;
+  font-weight: 900;
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 300%;
+  margin-bottom: 0.9em;
+}
+
+h2 {
+  font-size: 200%;
+}
+
+#table-of-contents {
+  background-image: url(https://www.nata.org/sites/default/files/500x500_practice-patient-care_health-issues_opioids.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#table-of-contents .nav a {
+  background-color: white;
+}
+
+#sidebar a {
+  color: black;
+} 
+
+#table-of-contents .nav .active ul li a {
+  color: black !important;
+}

@@ -4,6 +4,7 @@ author: "Chris Murphy, Tamer Sullivan, and Sean Wei"
 date: "11/19/2020"
 output:
   rmdformats::readthedown:
+    css: "blogcss.css"
     thumbnails: false
     highlight: NULL
 ---
@@ -13,7 +14,6 @@ library(tidyverse)
 library(plotly)
 library(ggrepel)
 library(maps)
-library(mosaic)
 
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 ```
@@ -182,20 +182,12 @@ In the first maps we can see how the prescription rate for opioids has changed f
 
 The next graphs are the Overdose rates per state from 2014 to 2018. Here we can see that overdoses have been substantially increasing each year since 2014. What's interesting here is that many states with high prescription rates also have very high overdose rates which alludes to the possibility that prescription rate may contribute to the overdose rate in a state. West Virginia is known for having the worst opioid problem in the United States and the overdose rate here increases from 35.5 to 51.5 over the five year span. The opioid crisis is getting worse every year however, if states continue to keep lowering their prescription rates perhaps this can help to solve the problem. 
 
-# Regression
+# Pearson's Correlation Test
 
-A very simple statistical analysis of whether or not two variables are correlated is to run a linear regression that predicts how a 1 unit increase in the prescription rate of a state affects the overdose rate in that state. We chose to run the regression on 2014 data specifically because it was the worst in terms of overdoses in our data. After running the model, we found that there is a statistically significant relationship between the two variables (p-value < .05). The actual linear relationship suggests that a 1 unit increase in the prescription rate will result in a .10475 unit increase in the overdose rate. Although this model is not perfect (we have almost certainly left out contributing variables that leads to some bias), the statistically significant, positive relationship between the prescription rate and the overdose rate at least show that the overdose rate is likely to go up with a greater prescription rate.
-
-```{r, warning = FALSE, echo = FALSE, comment = NA}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Filtering for 2014 data
 data_2014 <- filter(full_data, year == 2014)
-mod <- lm(age_adjusted_rate ~ prescription_rate, data = data_2014)
-msummary(mod)
-cor.test(data_2014$age_adjusted_rate, data_2014$prescription_rate)
-```
 
-One example of a statistical analysis to determine whether or not two variables are correlated is the Pearson's correlation test. We chose to run this test on 2014 data specifically because it was the worst in terms of overdoses in our data. The conditions for this test seem satisfied because there is a linear relationship present between the variables and both variables mostly follow a normal distribution (there is some deviation from the QQ line, but the consequences of assumed normality are not detrimental here because we are not using this test to predict). The p-value of this test is less than the standard $\alpha$ = 0.05, so we can conclude that prescription rate and age adjusted overdose rate are significantly correlated with a correlation coefficient of 0.394.
-
-```{r, echo = FALSE, warning = FALSE}
 # Checking linearity
 ggplotly(
 ggplot(data = data_2014, aes(x = prescription_rate, y = age_adjusted_rate)) +
@@ -205,26 +197,26 @@ ggplot(data = data_2014, aes(x = prescription_rate, y = age_adjusted_rate)) +
                               '<b>Prescription Rate</b>: ', prescription_rate,
                               '<br>', 
                               '<b>Overdose Rate</b>: ', age_adjusted_rate))) +
-  geom_abline(intercept = 7.56323, slope = 0.10475) +
-  theme(legend.position="none") +
+  geom_smooth(method = lm) +
+  theme(legend.position = "none") +
   labs(x = "Prescription Rate", y = "Age Adjusted Overdose Rate") + 
-  ggtitle("Relationship between Prescription Rate and Overdose Rate"),
+  ggtitle("Prescription Rate vs Overdose Rate"),
 tooltip = "text"
 )
 ```
 
-```{r echo = FALSE}
+```{r eval = FALSE, echo = FALSE}
 # Checking normality
-library(ggpubr)
-ggqqplot(data_2014$age_adjusted_rate, ylab = "Overdose Rate")
-ggqqplot(data_2014$prescription_rate, ylab = "Prescription Rate")
+ggpubr::ggqqplot(data_2014$age_adjusted_rate, ylab = "Overdose Rate")
+ggpubr::ggqqplot(data_2014$prescription_rate, ylab = "Prescription Rate")
 ```
 
 ```{r warning = FALSE, echo = FALSE}
 # Running Pearson's correlation test
-data_2014 <- filter(full_data, year == 2014)
 cor.test(data_2014$age_adjusted_rate, data_2014$prescription_rate)
 ```
+
+One example of a statistical analysis to determine whether or not two variables are correlated is the Pearson's correlation test. We chose to run this test on 2014 data specifically because it was the worst in terms of overdoses in our data. The conditions for this test seem satisfied because there is a linear relationship present between the variables and both variables mostly follow a normal distribution (there is some deviation from the QQ line, but the consequences of assumed normality are not detrimental here because we are not using this test to predict). The p-value of this test is less than the standard $\alpha$ = 0.05, so we can conclude that prescription rate and age adjusted overdose rate are significantly correlated with a correlation coefficient of 0.394.
 
 # K-Means Clustering
 
@@ -351,13 +343,13 @@ To interact with these plots further, visit: https://swei1999.shinyapps.io/Blog-
 
 # Conclusion
 
-## Answering Questions
+## Answering Our Questions Of Interest
 
-1. How do prescription rates affect overdose rates in every state?
+**1. How do prescription rates affect overdose rates in every state?**
 
 Looking at each year individually, it's clear that the states with the highest prescription rates also have the highest overdose rates. Given our prescription rate maps and overdose rate maps along with the linear regression model, it's fair to say that there is some correlation between the states with the highest prescription rates and the states with the highest overdose rate. If you take a look at the beginning of the the opioid epidemic, it initially started when doctors began to over prescribe opioids as pain medication. As more prescriptions were written, the problem slowly got out of hand and led to hundreds of thousands of Americans becoming addicted to opiates. When the FDA finally decided to more heavily regulate opioid prescriptions, the cat was already out of the bag and we now have an epidemic on our hands.
 
-2. Which states seem to have been most impacted by the opioid crisis?
+**2. Which states seem to have been most impacted by the opioid crisis?**
 
 Throughout 2014-2018, the states most strongly impacted by the opioid epidemic are primarily located across the east and south-eastern United States. In particular, southern states are consistently grouped together as high risk (with high rates of prescriptions and overdoses). Notably, West Virginia was constantly among the highest risk states.
 
@@ -366,9 +358,9 @@ It is interesting to note that the general pattern of high risk states located i
 ![Image of stroke belt - https://www.cdc.gov/stroke/maps_data.htm](images/stroke_map.jpg)
 
 
-3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored? 
+**3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored?**
 
-Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availiblity, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
+Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availability, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
 
 ## Next Steps
 
@@ -383,7 +375,7 @@ ggplotly(
   theme(legend.position="right") +
   scale_fill_distiller(palette = "Green", direction = 2)+
   labs(fill = "Prescription Rate")+
-  ggtitle(label = "Prescription Rates in West Virgnia 2014")
+  ggtitle(label = "Prescription Rates in West Virgnia in 2014")
 )
 ```
 
