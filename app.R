@@ -19,6 +19,13 @@ full_data <- left_join(prescription_data, overdose_data, by = c("year", "State")
 # Initialize map data
 usa_states <- map_data(map = "state", region = ".")
 
+# Function to determine the optimal k
+silhouette_score <- function(k, data){
+  km <- kmeans(data[, 2:3], centers = k, nstart = 20)
+  score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
+  mean(score[, 3])
+}
+
 # ui 
 ui <- fluidPage( 
   
@@ -204,12 +211,7 @@ server <- function(input, output){
     data <- clustering_data()
     
     # Determine optimal k
-    silhouette_score <- function(k){
-      km <- kmeans(data[,2:3], centers = k, nstart = 20)
-      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
-      mean(score[, 3])
-    }
-    avg_sil <- sapply(2:5, silhouette_score)
+    avg_sil <- sapply(2:5, silhouette_score, data = data)
     optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
     
     # Perform k-means with optimal k
@@ -232,14 +234,9 @@ server <- function(input, output){
   output$clustermap <- renderPlot({
     set.seed(1106)
     data <- clustering_data()
-    
+
     # Determine optimal k
-    silhouette_score <- function(k){
-      km <- kmeans(data[, 2:3], centers = k, nstart = 20)
-      score <- cluster::silhouette(km$cluster, dist(data[, 2:3]))
-      mean(score[, 3])
-    }
-    avg_sil <- sapply(2:5, silhouette_score)
+    avg_sil <- sapply(2:5, silhouette_score, data = data)
     optimal_k <- which(as.data.frame(avg_sil)$avg_sil == max(avg_sil)) + 1
     
     # Perform k-means with optimal k
