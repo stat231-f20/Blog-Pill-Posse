@@ -224,7 +224,7 @@ Clustering is a machine learning method used to group together observations with
 
 ## Determining the Optimal K
 
-While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette score. The silhouette coefficient is a measure of how similar an observation is to its own cluster compared to other clusters. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates mean silhouette score using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value.
+While oftentimes you have to determine the optimal k for k-means clustering yourself, we wrote code to determine it for you. We determined the optimal k by selecting the largest mean silhouette score. The silhouette coefficient is a measure of how similar an observation is to its own cluster compared to other clusters. The values range from -1 (samples are assigned to the wrong cluster) to 1 (best possible value). The function below runs k-mean clustering on a given k, and then calculates mean silhouette score using the `silhouette` function from the `cluster` package. We are providing k inputs from 2-5, and then searching for the largest value. It is impo
 
 ```{r}
 # Helper function to calculate mean silhouette coefficient
@@ -362,7 +362,11 @@ It is interesting to note that the general pattern of high risk states located i
 
 Prescription rates aren't the only factor contributing to overdose rates throughout the United State. Other factors such as naloxone availability, poverty, and access to hospitals could absolutely play a role in contributing to overdose rates in the US. 
 
-## Next Steps
+## Limitations
+
+Although we were able to access national opioid data from the CDC that suited our needs, the data was not the most detailed. We struggled to come across any national opioid data that had numerous variables for us to explore. IQVIA, a health information-based data science company, is one of the sole providers of detailed prescription data in the US. Unfortunately for us, datasets that come from companies like IQVIA datasets cost money and are perhaps too large for our computers to handle.
+
+## Possible Next Steps
 
 We think next steps for our project could include going down to the county level and further exploring the opioid crisis from there. Looking into the county level crisis could allow us to highlight where the problems are the most potent in each state. For example, identifying which counties are mostly affected by the epidemic could help the state in providing funds and aid to the counties in need. Here’s a look into what a map of prescription rates in West Virginia would look like if we continued with our next steps.
 
