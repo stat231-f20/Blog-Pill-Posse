@@ -357,7 +357,7 @@ Throughout 2014 - 2018, the states most strongly impacted by the opioid epidemic
 
 It is interesting to note that the general pattern of high risk states located in the east and south east U.S. reflects numerous current public health trends. More specifically, the distribution of several cardiovascular diseases follows almost the same distribution as seen here. For example, the “Stroke Belt,” (pictured below) was recognized by public health officials as presenting notably high incidence of stroke. While the graphic  displays data from the 2000s, this same trend has been documented repeatedly over the past two decades. This sweeping pattern of poor health across the east-to-south-east U.S. has also been reported in other conditions, such as obesity. While no conclusive inferences can be drawn from this, this general trend could suggest that perhaps the same factors that are instrumental to the poor health of these states are also contributing to their classification as high risk for an opioid crisis.
 
-![Image of stroke belt - https://www.cdc.gov/stroke/maps_data.htm](images/stroke_map.jpg)
+![Image of the stroke belt from https://www.cdc.gov/stroke/maps_data.htm](images/stroke_map.jpg)
 
 
 **3. What other factors could potentially contribute to high overdose rates other than prescription rates that we haven’t explored?**
